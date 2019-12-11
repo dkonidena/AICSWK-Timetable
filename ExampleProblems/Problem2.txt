@@ -1,0 +1,47 @@
+Gallo,Databases,Security,Networks,Complexity
+Livermore,Data Science,Robotics,Networks,Security
+Nave,Urban Science,Databases,Architecture,Complexity
+Hess,Data Science,Architecture,Image Analysis,Artifical Intelligence
+Sturm,Distributed Systems,Security,Artifical Intelligence,Robotics
+Tennyson,Security,Urban Science,Robotics,Image Analysis
+Leighton,Algorithms,Data Science,Robotics,Complexity
+Firmin,Image Analysis,Data Science,Security,Networks
+Popham,Databases,Complexity,Networks,Algorithms
+Highfill,Image Analysis,Architecture,Networks,Algorithms
+Shoup,Complexity,Distributed Systems,Data Science,Mathematics
+Hofman,Robotics,Complexity,Distributed Systems,Algorithms
+Brecht,Robotics,Artifical Intelligence,Algorithms,Architecture
+Ponton,Architecture,Databases,Algorithms,Complexity
+Ostrom,Distributed Systems,Complexity,Artifical Intelligence,Architecture
+Brackin,Architecture,Complexity,Algorithms,Robotics
+Galbreath,Databases,Artifical Intelligence,Complexity,Urban Science
+Chancey,Artifical Intelligence,Robotics,Databases,Networks
+Bennett,Security,Distributed Systems,Algorithms,Networks
+Stevens,Security,Image Analysis,Complexity,Databases
+Prewitt,Complexity,Robotics,Algorithms,Security
+===
+CS257,Data Science,Robotics
+CS332,Complexity,Distributed Systems
+CS499,Complexity,Artifical Intelligence
+CS383,Security,Algorithms
+CS404,Security,Distributed Systems
+CS185,Databases,Artifical Intelligence
+CS355,Robotics,Artifical Intelligence
+CS179,Robotics,Algorithms
+CS425,Urban Science,Databases
+CS264,Architecture,Networks
+CS344,Artifical Intelligence,Algorithms
+CS240,Complexity,Data Science
+CS283,Image Analysis,Networks
+CS273,Security,Complexity
+CS137,Architecture,Complexity
+CS217,Distributed Systems,Algorithms
+CS493,Data Science,Image Analysis
+CS371,Image Analysis,Security
+CS107,Databases,Architecture
+CS278,Distributed Systems,Data Science
+CS465,Security,Networks
+CS418,Algorithms,Complexity
+CS437,Robotics,Distributed Systems
+CS463,Artifical Intelligence,Distributed Systems
+CS347,Architecture,Data Science

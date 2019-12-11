@@ -1,0 +1,65 @@
+Keppel,Image Analysis,Robotics,Urban Science,Distributed Systems
+Nagle,Urban Science,Databases,Networks,Mathematics
+Dobson,Security,Image Analysis,Mathematics,Distributed Systems
+Reyes,Image Analysis,Algorithms,Architecture,Data Science
+Zwiebel,Data Science,Algorithms,Architecture,Security
+Mcclintic,Artifical Intelligence,Architecture,Urban Science,Image Analysis
+Mc clure,Architecture,Robotics,Complexity,Networks
+Tarbell,Security,Distributed Systems,Image Analysis,Data Science
+Marcum,Networks,Algorithms,Image Analysis,Data Science
+Lobdell,Complexity,Data Science,Databases,Image Analysis
+Cabell,Networks,Image Analysis,Architecture,Data Science
+Waitt,Mathematics,Security,Data Science,Algorithms
+Jefferis,Algorithms,Security,Complexity,Networks
+Mclellan,Artifical Intelligence,Image Analysis,Distributed Systems,Databases
+Gahagan,Databases,Architecture,Algorithms,Artifical Intelligence
+Kinnear,Mathematics,Image Analysis,Data Science,Robotics
+Jenkin,Artifical Intelligence,Image Analysis,Robotics,Architecture
+Feather,Networks,Security,Robotics,Image Analysis
+Irene,Image Analysis,Urban Science,Data Science,Architecture
+Weymouth,Architecture,Networks,Mathematics,Databases
+Hochstetler,Architecture,Data Science,Networks,Security
+Gutierrez,Complexity,Robotics,Algorithms,Databases
+Disbrow,Urban Science,Image Analysis,Artifical Intelligence,Mathematics
+Mayne,Algorithms,Robotics,Data Science,Distributed Systems
+Mailhot,Urban Science,Algorithms,Image Analysis,Data Science
+Perham,Distributed Systems,Data Science,Artifical Intelligence,Mathematics
+Goodson,Networks,Databases,Algorithms,Data Science
+Wann,Security,Algorithms,Distributed Systems,Architecture
+Kloosterman,Mathematics,Robotics,Distributed Systems,Complexity
+Cormier,Architecture,Data Science,Algorithms,Mathematics
+Kensinger,Databases,Mathematics,Urban Science,Complexity
+Transue,Mathematics,Distributed Systems,Artifical Intelligence,Databases
+Lagace,Image Analysis,Robotics,Artifical Intelligence,Networks
+Whitt,Databases,Image Analysis,Algorithms,Security
+Lind,Data Science,Urban Science,Security,Distributed Systems
+Pleau,Security,Artifical Intelligence,Robotics,Architecture
+Grannis,Algorithms,Image Analysis,Databases,Mathematics
+Rugg,Algorithms,Networks,Security,Databases
+Caulfield,Data Science,Algorithms,Robotics,Architecture
+===
+CS444,Distributed Systems,Image Analysis
+CS394,Data Science,Complexity
+CS214,Data Science,Networks
+CS163,Robotics,Artifical Intelligence
+CS329,Algorithms,Distributed Systems
+CS337,Algorithms,Databases
+CS407,Architecture,Networks
+CS372,Networks,Algorithms
+CS369,Image Analysis,Robotics
+CS206,Image Analysis,Security
+CS240,Security,Algorithms
+CS449,Artifical Intelligence,Distributed Systems
+CS336,Architecture,Complexity
+CS118,Robotics,Data Science
+CS215,Algorithms,Image Analysis
+CS312,Mathematics,Architecture
+CS293,Image Analysis,Data Science
+CS371,Data Science,Algorithms
+CS197,Robotics,Complexity
+CS274,Mathematics,Robotics
+CS494,Urban Science,Data Science
+CS160,Databases,Data Science
+CS184,Networks,Mathematics
+CS177,Mathematics,Security
+CS152,Architecture,Algorithms

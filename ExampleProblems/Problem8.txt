@@ -1,0 +1,59 @@
+Davie,Data Science,Image Analysis,Architecture
+Glines,Security,Image Analysis,Mathematics
+Chilton,Distributed Systems,Image Analysis,Complexity
+Dunlop,Urban Science,Architecture,Security
+Hews,Databases,Urban Science,Mathematics
+Bigby,Data Science,Security,Artifical Intelligence
+Johnson,Data Science,Artifical Intelligence,Architecture
+Bartel,Urban Science,Databases,Distributed Systems
+Bachiler,Complexity,Artifical Intelligence,Databases
+Hosley,Distributed Systems,Urban Science,Architecture
+Leighton,Artifical Intelligence,Mathematics,Robotics
+Nicholas,Security,Databases,Image Analysis
+Latting,Networks,Data Science,Complexity
+Shoup,Mathematics,Artifical Intelligence,Security
+Leetham,Security,Networks,Algorithms
+Dolan,Security,Artifical Intelligence,Architecture
+Kinder,Image Analysis,Distributed Systems,Architecture
+Hoffman,Artifical Intelligence,Architecture,Robotics
+Brammer,Image Analysis,Databases,Security
+Heckendorn,Urban Science,Data Science,Image Analysis
+Olin,Algorithms,Networks,Image Analysis
+Wheatley,Data Science,Distributed Systems,Image Analysis
+Goodpaster,Networks,Data Science,Security
+Husted,Networks,Data Science,Urban Science
+Houdeshell,Security,Image Analysis,Artifical Intelligence
+Mcewan,Security,Complexity,Data Science
+Keck,Networks,Artifical Intelligence,Complexity
+Heckman,Architecture,Networks,Robotics
+Veal,Algorithms,Data Science,Robotics
+Goshorn,Algorithms,Databases,Robotics
+Sutphin,Networks,Architecture,Urban Science
+Rayfield,Image Analysis,Urban Science,Artifical Intelligence
+Conklin,Data Science,Image Analysis,Complexity
+===
+CS468,Databases,Robotics
+CS159,Networks,Algorithms
+CS469,Data Science,Security
+CS151,Complexity,Security
+CS465,Image Analysis,Databases
+CS461,Data Science,Architecture
+CS193,Mathematics,Robotics
+CS127,Artifical Intelligence,Robotics
+CS329,Security,Artifical Intelligence
+CS345,Data Science,Complexity
+CS490,Architecture,Networks
+CS126,Urban Science,Security
+CS279,Image Analysis,Artifical Intelligence
+CS177,Artifical Intelligence,Urban Science
+CS124,Algorithms,Robotics
+CS158,Image Analysis,Complexity
+CS234,Architecture,Urban Science
+CS241,Artifical Intelligence,Complexity
+CS458,Distributed Systems,Architecture
+CS200,Networks,Urban Science
+CS162,Urban Science,Distributed Systems
+CS346,Image Analysis,Data Science
+CS236,Databases,Complexity
+CS430,Image Analysis,Urban Science
+CS122,Security,Databases

@@ -1,0 +1,46 @@
+Matte,Data Science,Complexity,Image Analysis,Distributed Systems,Artifical Intelligence,Networks
+Threlkeld,Robotics,Security,Urban Science,Architecture
+Hilbert,Robotics,Security,Networks,Artifical Intelligence,Architecture,Mathematics
+Barling,Architecture,Image Analysis,Mathematics
+Robins,Complexity,Mathematics,Distributed Systems,Architecture,Databases
+Roush,Distributed Systems,Urban Science,Image Analysis,Networks,Artifical Intelligence,Architecture
+Reardon,Distributed Systems,Artifical Intelligence,Networks
+Bybee,Networks,Robotics,Complexity,Databases
+Stage,Mathematics,Robotics,Image Analysis,Distributed Systems
+Creek,Databases,Mathematics,Robotics
+Loveless,Complexity,Urban Science,Mathematics,Artifical Intelligence,Robotics
+Bolles,Image Analysis,Data Science,Robotics,Architecture,Distributed Systems,Mathematics
+Almy,Security,Image Analysis,Artifical Intelligence,Mathematics,Complexity
+Baughman,Networks,Urban Science,Databases,Data Science,Distributed Systems,Artifical Intelligence
+Chouinard,Mathematics,Artifical Intelligence,Distributed Systems
+Phillip,Data Science,Complexity,Robotics,Databases,Security
+Heyward,Image Analysis,Urban Science,Architecture,Databases,Data Science
+Castor,Urban Science,Architecture,Robotics
+Berge,Urban Science,Architecture,Data Science
+Coco,Algorithms,Robotics,Databases
+===
+CS446,Mathematics,Urban Science
+CS430,Image Analysis,Urban Science
+CS170,Robotics,Databases
+CS411,Data Science,Urban Science
+CS113,Artifical Intelligence,Mathematics
+CS211,Data Science,Robotics
+CS399,Architecture,Urban Science
+CS329,Urban Science,Robotics
+CS117,Databases,Networks
+CS326,Robotics,Image Analysis
+CS198,Image Analysis,Architecture
+CS195,Architecture,Robotics
+CS200,Mathematics,Architecture
+CS472,Complexity,Mathematics
+CS382,Distributed Systems,Mathematics
+CS162,Urban Science,Networks
+CS304,Data Science,Image Analysis
+CS327,Complexity,Robotics
+CS103,Distributed Systems,Urban Science
+CS217,Complexity,Image Analysis
+CS487,Mathematics,Robotics
+CS413,Robotics,Security
+CS392,Networks,Complexity
+CS338,Robotics,Algorithms
+CS343,Security,Networks

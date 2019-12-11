@@ -1,0 +1,55 @@
+Kilgore,Complexity,Algorithms,Distributed Systems
+Hatchard,Distributed Systems,Artifical Intelligence,Databases
+Randolph,Mathematics,Algorithms,Image Analysis
+Copland,Robotics,Networks,Image Analysis
+Makin,Data Science,Networks,Image Analysis
+Hannold,Robotics,Architecture,Image Analysis
+Scutter,Complexity,Image Analysis,Urban Science
+Bell,Distributed Systems,Security,Data Science
+Kerby,Security,Data Science,Complexity
+Sharpless,Mathematics,Algorithms,Complexity
+England,Networks,Complexity,Data Science
+Kibler,Algorithms,Databases,Mathematics
+Cason,Distributed Systems,Security,Networks
+Dewhurst,Security,Robotics,Mathematics
+Poyntz,Robotics,Architecture,Mathematics
+Badgley,Robotics,Complexity,Image Analysis
+Mohr,Complexity,Security,Distributed Systems
+Dunlop,Distributed Systems,Complexity,Robotics
+Metz,Data Science,Robotics,Networks
+Eiver,Distributed Systems,Artifical Intelligence,Urban Science
+Wakely,Mathematics,Data Science,Urban Science
+Kinnaird,Data Science,Networks,Algorithms
+Mantooth,Complexity,Algorithms,Data Science
+Hunsucker,Security,Image Analysis,Complexity
+Brightwell,Security,Distributed Systems,Artifical Intelligence
+Hofmann,Data Science,Databases,Artifical Intelligence
+Julius,Networks,Algorithms,Databases
+Cohen,Security,Urban Science,Image Analysis
+Peake,Architecture,Image Analysis,Robotics
+===
+CS117,Mathematics,Data Science
+CS336,Artifical Intelligence,Distributed Systems
+CS469,Mathematics,Security
+CS144,Complexity,Networks
+CS363,Algorithms,Databases
+CS223,Image Analysis,Robotics
+CS468,Distributed Systems,Databases
+CS176,Data Science,Image Analysis
+CS237,Complexity,Data Science
+CS133,Security,Distributed Systems
+CS399,Complexity,Security
+CS211,Data Science,Security
+CS180,Distributed Systems,Complexity
+CS493,Algorithms,Data Science
+CS255,Robotics,Complexity
+CS183,Networks,Databases
+CS497,Image Analysis,Complexity
+CS403,Urban Science,Mathematics
+CS145,Security,Robotics
+CS304,Image Analysis,Urban Science
+CS357,Networks,Image Analysis
+CS103,Security,Image Analysis
+CS495,Data Science,Networks
+CS368,Data Science,Databases
+CS426,Architecture,Robotics

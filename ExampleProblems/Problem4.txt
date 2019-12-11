@@ -1,0 +1,53 @@
+Chas,Databases,Mathematics,Networks,Robotics
+Dormer,Image Analysis,Robotics,Mathematics,Databases
+Boys,Data Science,Image Analysis,Security,Databases
+Atchison,Urban Science,Robotics,Data Science,Networks
+Shatto,Image Analysis,Security,Architecture,Distributed Systems
+Belew,Mathematics,Image Analysis,Databases,Security
+Speaks,Mathematics,Algorithms,Robotics,Networks
+Pottinger,Artifical Intelligence,Data Science,Urban Science,Architecture
+Annette,Image Analysis,Complexity,Artifical Intelligence,Robotics
+Hertzog,Distributed Systems,Networks,Databases,Algorithms
+Tiffin,Complexity,Security,Image Analysis,Algorithms
+Vice,Distributed Systems,Data Science,Robotics,Algorithms
+Hearl,Databases,Algorithms,Image Analysis,Urban Science
+Provost,Artifical Intelligence,Architecture,Algorithms,Urban Science
+Pullin,Mathematics,Robotics,Networks,Artifical Intelligence
+Hulbert,Urban Science,Robotics,Image Analysis,Mathematics
+Augusta,Distributed Systems,Data Science,Image Analysis,Algorithms
+Mcvay,Databases,Mathematics,Networks,Data Science
+Chauvin,Networks,Robotics,Databases,Security
+Mouser,Urban Science,Image Analysis,Databases,Distributed Systems
+Basye,Mathematics,Data Science,Security,Complexity
+Thompkins,Artifical Intelligence,Robotics,Data Science,Urban Science
+Cradock,Artifical Intelligence,Distributed Systems,Image Analysis,Data Science
+Coffin,Networks,Urban Science,Databases,Distributed Systems
+Brando,Data Science,Mathematics,Robotics,Networks
+Braddock,Databases,Robotics,Urban Science,Image Analysis
+Nicholl,Networks,Databases,Complexity,Image Analysis
+===
+CS186,Distributed Systems,Robotics
+CS173,Artifical Intelligence,Algorithms
+CS309,Architecture,Image Analysis
+CS154,Databases,Complexity
+CS451,Urban Science,Data Science
+CS384,Distributed Systems,Networks
+CS182,Urban Science,Databases
+CS478,Image Analysis,Security
+CS233,Complexity,Image Analysis
+CS223,Mathematics,Algorithms
+CS316,Data Science,Distributed Systems
+CS307,Image Analysis,Robotics
+CS357,Robotics,Urban Science
+CS418,Robotics,Algorithms
+CS285,Databases,Robotics
+CS466,Mathematics,Image Analysis
+CS467,Robotics,Networks
+CS387,Mathematics,Security
+CS460,Artifical Intelligence,Image Analysis
+CS234,Networks,Complexity
+CS225,Algorithms,Databases
+CS192,Data Science,Mathematics
+CS281,Networks,Mathematics
+CS424,Networks,Databases
+CS157,Databases,Image Analysis

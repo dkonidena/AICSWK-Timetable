@@ -1,0 +1,59 @@
+Stilwell,Architecture,Data Science,Distributed Systems,Complexity,Mathematics,Robotics,Artifical Intelligence
+Fishback,Algorithms,Networks,Data Science,Complexity,Mathematics,Databases,Distributed Systems
+Mebane,Mathematics,Networks,Databases,Algorithms,Architecture,Security,Urban Science
+Bader,Architecture,Databases,Distributed Systems,Urban Science,Data Science
+Pollock,Artifical Intelligence,Algorithms,Robotics,Complexity,Mathematics,Databases,Networks,Urban Science
+Deel,Networks,Databases,Data Science,Distributed Systems,Architecture,Artifical Intelligence,Complexity
+Gearheart,Urban Science,Data Science,Algorithms,Image Analysis,Security,Artifical Intelligence,Complexity,Databases
+Gearhart,Mathematics,Distributed Systems,Security,Databases
+Parmenter,Artifical Intelligence,Databases,Security,Urban Science
+Stickler,Security,Distributed Systems,Mathematics,Databases,Robotics,Complexity,Architecture,Networks
+Patchin,Algorithms,Distributed Systems,Data Science,Urban Science,Robotics
+New,Architecture,Distributed Systems,Artifical Intelligence,Networks,Algorithms,Security
+Wallingford,Robotics,Algorithms,Architecture,Image Analysis,Distributed Systems,Networks,Data Science,Databases
+Greer,Data Science,Security,Mathematics,Robotics,Distributed Systems
+Leverich,Image Analysis,Artifical Intelligence,Architecture,Mathematics
+Joy,Security,Architecture,Image Analysis,Robotics
+Converse,Data Science,Image Analysis,Architecture,Artifical Intelligence,Robotics,Databases,Mathematics
+Callaghan,Artifical Intelligence,Security,Urban Science,Distributed Systems,Image Analysis,Networks
+Gard,Data Science,Databases,Networks,Urban Science,Mathematics,Security,Image Analysis,Distributed Systems
+Hogg,Mathematics,Artifical Intelligence,Databases,Robotics,Complexity,Urban Science,Networks
+Littleton,Networks,Security,Urban Science,Complexity,Algorithms,Image Analysis,Distributed Systems,Data Science
+Gase,Architecture,Databases,Image Analysis,Mathematics,Networks,Security,Robotics
+Kahrs,Mathematics,Security,Networks,Databases,Architecture,Algorithms,Complexity
+Stage,Image Analysis,Artifical Intelligence,Architecture,Robotics,Distributed Systems,Databases,Networks
+Sipes,Mathematics,Security,Robotics,Artifical Intelligence,Data Science,Algorithms,Networks
+Mccreery,Distributed Systems,Robotics,Networks,Algorithms,Mathematics
+Cassady,Algorithms,Distributed Systems,Networks,Databases,Artifical Intelligence,Robotics,Image Analysis,Security
+Bourne,Algorithms,Architecture,Robotics,Data Science,Artifical Intelligence,Distributed Systems,Image Analysis
+Laurens,Image Analysis,Data Science,Networks,Distributed Systems,Algorithms,Complexity,Robotics,Mathematics
+Henrie,Robotics,Data Science,Urban Science,Image Analysis,Architecture
+Kirchner,Complexity,Artifical Intelligence,Urban Science,Mathematics,Architecture
+Comer,Databases,Complexity,Data Science,Image Analysis,Algorithms,Security,Distributed Systems
+Bixby,Architecture,Urban Science,Distributed Systems,Image Analysis,Databases,Algorithms,Networks,Robotics
+===
+CS332,Security,Data Science
+CS269,Data Science,Databases
+CS237,Architecture,Image Analysis
+CS168,Artifical Intelligence,Robotics
+CS403,Security,Distributed Systems
+CS369,Algorithms,Robotics
+CS416,Databases,Image Analysis
+CS377,Distributed Systems,Data Science
+CS199,Artifical Intelligence,Databases
+CS132,Mathematics,Distributed Systems
+CS294,Networks,Urban Science
+CS234,Security,Networks
+CS115,Architecture,Distributed Systems
+CS419,Architecture,Artifical Intelligence
+CS340,Security,Artifical Intelligence
+CS160,Data Science,Urban Science
+CS487,Distributed Systems,Algorithms
+CS260,Image Analysis,Artifical Intelligence
+CS321,Mathematics,Security
+CS193,Networks,Databases
+CS146,Robotics,Architecture
+CS449,Architecture,Algorithms
+CS170,Algorithms,Data Science
+CS152,Urban Science,Robotics
+CS405,Networks,Algorithms
