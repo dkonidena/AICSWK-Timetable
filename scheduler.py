@@ -144,6 +144,12 @@ class Scheduler:
 				sessionNumber = 1
 				dayNumber = dayNumber + 1
 
+	def tutorCanTeach(self, tutor, module, labOrModule):
+		if labOrModule:
+			return (all(x in tutor.expertise for x in module.topics))
+		else:
+			return (any(x in tutor.expertise for x in module.topics))
+		
 
 
 
