@@ -2,9 +2,12 @@
 #topics is a list of strings
 #name is a string
 class Module:
-	def __init__(self,name="", topics=list()):
+	def __init__(self,name="", topics=None):
 		self.name = name
 		self.topics = topics
+
+		if self.topics is None:
+			self.topics = list()
 
 	#this is used during set up and should not be used in your solution
 	def setName(self,name):

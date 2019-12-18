@@ -4,9 +4,12 @@ import module
 #name is a string
 class Tutor:
 
-	def __init__(self,name="", expertise=list()):
+	def __init__(self,name="", expertise=None):
 		self.name=name
 		self.expertise=expertise
+
+		if self.expertise is None:
+			self.expertise = list()
 
 	#this is used during set up and should not be used in your solution
 	def setName(self,name):
@@ -18,7 +21,7 @@ class Tutor:
 	
 	#this is used during set up and should not be used in your solution
 	def addExpertise(self,expertise):
-		self.expertise.add(expertise)
+		self.expertise.append(expertise)
 
 	def __str__(self):
 		return str([self.name, self.expertise])

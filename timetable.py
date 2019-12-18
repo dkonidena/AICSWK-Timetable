@@ -13,7 +13,7 @@ class Timetable:
 		self.taskNumber = taskNumber
 
 
-	#This method is used by other classes, and should not be used by you
+	#This method is used to retrieve the [tutor, module, sessionType] tuple for a given timeslot on a given day.
 	def getSession(self, day, timeslot):
 		if day not in self.schedule:
 			raise ValueError("Day can only be Monday, Tuesday, Wednesday, Thursday or Friday")
@@ -23,7 +23,8 @@ class Timetable:
 			else:
 				raise ValueError("timeslot not yet assigned")
 
-	#This method is used by other classes, and should not be used by you
+	#This method is a simple boolean test to see if the given timeslot on the given day has been assigned.
+	#It will return true if it has been assigned, and false if it has not.
 	def sessionAssigned(self,day,timeslot):
 		if day not in self.schedule:
 			raise ValueError("Day can only be Monday, Tuesday, Wednesday, Thursday or Friday")
@@ -152,6 +153,7 @@ class Timetable:
 		tutorsYesterday = list()
 		modCount = dict()
 		labCount = dict()
+		taughtModuleYesterday = list()
 
 		for tutor in tutorList:
 			modCount[tutor.name] = 0
@@ -169,6 +171,7 @@ class Timetable:
 
 			tutorsToday = dict()
 			possibleDiscount = dict()
+			taughtModuleToday = list()
 
 			#process the validity of each entry
 			for entry in self.schedule[day]:
@@ -204,10 +207,11 @@ class Timetable:
 						#We calculate the correct cost for the module
 						if sessionType == "module":
 							tutorsToday[tut.name] = tutorsToday[tut.name] + 2
+							taughtModuleToday.append(tut)
 							modCount[tut.name] = modCount[tut.name] + 1
 							if modCount[tut.name] == 1:
 								scheduleCost = scheduleCost + 500
-							elif tut.name in tutorsYesterday:
+							elif tut in taughtModuleYesterday:
 								scheduleCost = scheduleCost + 100
 							else:
 								scheduleCost = scheduleCost + 300
@@ -225,10 +229,11 @@ class Timetable:
 					#We calculate the costs correspondingly
 					if sessionType == "module":
 						tutorsToday[tut.name] = 2
+						taughtModuleToday.append(tut)
 						modCount[tut.name] = modCount[tut.name] + 1
 						if modCount[tut.name] == 1:
 							scheduleCost = scheduleCost + 500
-						elif tut.name in tutorsYesterday:
+						elif tut in taughtModuleYesterday:
 							scheduleCost = scheduleCost + 100
 						else:
 							scheduleCost = scheduleCost + 300
@@ -263,6 +268,7 @@ class Timetable:
 					return False
 
 			tutorsYesterday = tutorsToday
+			taughtModuleYesterday = taughtModuleToday
 
 		#One final check to make sure total credits haven't been exceeded
 		for name in tutorCount:
