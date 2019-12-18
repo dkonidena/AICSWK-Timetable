@@ -5,8 +5,42 @@ import timetable
 import random
 import math
 
-class Scheduler:
+# class VariableDomains:
+# 	def __init__(self, slotlist, modulelist, tutorlist):
+# 		self.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+# 		self.slots = slotlist
+# 		self.modules = modulelist
+# 		self.tutors = tutorlist
 
+class Assignment:
+	def __init__(self, tutor, module, day, slot):
+		self.tutor = tutor
+		self.module = module
+		self.day = day
+		self.slot = slot
+
+class Node:
+	def __init__(self, Assignment):
+		self.Assignment = Assignment
+		self.next = None
+		self.prev = None
+
+class Tree:
+	def __init__(self):
+		self.root = None
+		self.child = None
+
+	def add(self, node):
+		if(self.root == None):
+			self.root = node
+			self.leaf = node
+		else:
+			self.leaf.next = node
+			node.prev = self.leaf
+			self.leaf = node
+
+class Scheduler:
+	
 	def __init__(self,tutorList, moduleList):
 		self.tutorList = tutorList
 		self.moduleList = moduleList
@@ -47,14 +81,60 @@ class Scheduler:
 	#Furthermore, you should not import anything else beyond what has been imported above. 
 
 	#This method should return a timetable object with a schedule that is legal according to all constraints of task 1.
+	
+	def MRV(self, assignment, domain, moduleDomain, tutorDomain):
+		availableVariables = []
+		if assignment.tutor == None:
+			availableVariables.append("tutors")
+		if assignment.module == None:
+			availableVariables.append("modules")
+		if assignment.day == None:
+			availableVariables.append("days")
+		if assignment.slot == None:
+			availableVariables.append("slots")
+		min = math.inf
+		tieBreaker = []
+		minVariable = ""
+		# legal values need to be checked
+		for x in availableVariables:
+			if len(domain[x]) == min:
+				tieBreaker.append(x)
+			elif len(domain[x])<min:
+				tieBreaker.clear()
+				tieBreaker.append(x)
+				minVariable = x
+				min = len(domain[x])
+			else:
+				continue
+		
+		# need a degree heuristic to be implemented		
+		return (tieBreaker, minVariable)
+
+	def VariableDomains(self, slots, modules, tutors):
+		return {"slots":slots, 
+			"modules":modules, 
+			"tutors":tutors, 
+			"days":["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
+
+
 	def createSchedule(self):
 		#Do not change this line
+		domain = self.VariableDomains([1,2,3,4,5], self.moduleList, self.tutorList)
 		timetableObj = timetable.Timetable(1)
-		
-		#Here is where you schedule your timetable
+		slotDomain = {}
+		for day in domain["days"]:
+			slotDomain[day] = 5
+		moduleDomain = {}
+		for module in domain["modules"]:
+			moduleDomain[module] = self.eligibleTutors(module, True)
+		tutorDomain = {}
+		for tutor in domain["tutors"]:
+			tutorDomain[tutor] = (self.eligibleModules(tutor, True), domain["days"], 2)
+
+
 
 		#This line generates a random timetable, that may not be valid. You can use this or delete it.
-		self.randomModSchedule(timetableObj)
+		# self.randomModSchedule(timetableObj)
 
 		#Do not change this line
 		return timetableObj
@@ -143,13 +223,26 @@ class Scheduler:
 			if sessionNumber == 11:
 				sessionNumber = 1
 				dayNumber = dayNumber + 1
-
+	# true for module and false for lab
 	def tutorCanTeach(self, tutor, module, labOrModule):
 		if labOrModule:
 			return (all(x in tutor.expertise for x in module.topics))
 		else:
 			return (any(x in tutor.expertise for x in module.topics))
-		
+
+	def eligibleModules(self, tutor, labOrModule):
+		modules = []
+		for x in self.moduleList:
+			if(self.tutorCanTeach(tutor, x, labOrModule)):
+				modules.append(x)
+		return modules
+	
+	def eligibleTutors(self, module, labOrModule):
+		tutors = []
+		for x in self.tutorList:
+			if(self.tutorCanTeach(x, module, labOrModule)):
+				tutors.append(x)
+		return tutors		
 
 
 
