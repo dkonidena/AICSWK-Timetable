@@ -53,7 +53,7 @@ class Scheduler:
 		"days":["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], 
 		"slots":slots}
 	# choosing the module with minimum tutors available (tutors are dynamically updated in all the places)
-	def moduleChoose(self, moduleDomain, tutorDomain):
+	def moduleChoose(self, moduleDomain, tutorDomain, slotDomain):
 		minTutors = math.inf
 		minModule = {}
 		# choosing the module with the least tutors available
@@ -65,20 +65,61 @@ class Scheduler:
 			elif len(moduleDomain[module]) == minTutors:
 				minModule[module] = moduleDomain[module]
 		# from the modules chosen along with the tutors, choosing the tutor with the max available days
-		selectedTutor = None
-		selectedModule = None
-		maxDays = 0
+		# which implies the max available slots - checking slots too
+		selected = {}
+		maxDays = -1
 		for module in minModule:
 			for tutor in minModule[module]:
-				if len(tutorDomain[tutor][0]) > maxDays:
+				if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] > 0:
+					selected.clear()
+					selected[module] = []
+					selected[module].append(tutor)
 					maxDays = len(tutorDomain[tutor][0])
-					selectedTutor = tutor
-					selectedModule = module
-		print(selectedModule, " with ", selectedTutor)
-		tutorDomain[selectedTutor][0].pop(random.randrange(len(tutorDomain[selectedTutor][0])))
-		tutorDomain[selectedTutor][1] -= 1
-		return selectedTutor
+				elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] > 0:
+					if module in selected:
+						selected[module].append(tutor)
+					else:
+						selected[module] = []
+						selected[module].append(tutor)
+		if maxDays > 0:
+			print("possible")
+		else:
+			print("no possible soln") # if in the checking nothing changed
+		slotsAssigned = self.slotCheck(slotDomain, tutorDomain, selected)
+		assginment = self.maxSlots(slotsAssigned, slotDomain)
+		
+		return assginment
 
+	def maxSlots(self, slotsAssigned, slotDomain):
+		maxSlots = 0
+		day = None
+		module = None
+		tutor = None
+		for slots in slotsAssigned:
+			# from the assigned slots for all the modules, finalise the one with the day having the most slots
+			if slotDomain[slotsAssigned[slots][1]] > maxSlots:
+				maxSlots = slotDomain[slotsAssigned[slots][1]]
+				day = slotsAssigned[slots][1]
+				module = slots
+				tutor = slotsAssigned[slots][0]
+		return (module,tutor,day)
+
+	# if slot domain value is 0 then day should also be deleted
+	def slotCheck(self, slotDomain, tutorDomain, selected):
+		available = {}
+		found = False
+		for module in selected:
+			available[module] = {}
+			for tutor in selected[module]:
+				for day in slotDomain:
+					if day in tutorDomain[tutor][0]:
+						available[module] = [tutor, day]
+						found = True
+						break
+				if found:
+					break
+		# a dict of modules: and tutors with days
+		return available
 
 
 	def createSchedule(self):
@@ -93,10 +134,23 @@ class Scheduler:
 			moduleDomain[module] = self.eligibleTutors(module, True)
 		tutorDomain = {}
 		for tutor in domain["tutors"]:
-			tutorDomain[tutor] = [domain["days"], 2]
-		x = self.moduleChoose(moduleDomain, tutorDomain)
-
-		print("FINAL", tutorDomain[x])
+			tutorDomain[tutor] = [domain["days"].copy(), 2]
+		while(moduleDomain):
+			x = self.moduleChoose(moduleDomain, tutorDomain, slotDomain)
+			if(x[0] != None or x[1] != None or x[2] != None):
+				timetableObj.addSession(x[2], slotDomain[x[2]], x[1], x[0], "module")
+				del moduleDomain[x[0]]
+				slotDomain[x[2]] -=1
+				if(slotDomain[x[2]] == 0):
+					del slotDomain[x[2]]
+				tutorDomain[x[1]][0].remove(x[2])
+				tutorDomain[x[1]][1] -=1
+				print(x)
+				print(tutorDomain[x[1]])
+			else:
+				print("backtrack")
+				# need to implement backtrack	
+		print(slotDomain)
 		
 		#Here is where you schedule your timetable
 
