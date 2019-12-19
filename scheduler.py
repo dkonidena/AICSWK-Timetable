@@ -6,8 +6,9 @@ import random
 import math
 
 class Node:
-	def __init__(self, module, tutor, day, slot):
-		self.assignment = (module, tutor, day, slot)
+	def __init__(self, module, tutor, day, slot, possible):
+		self.assignment = [module, tutor, day, slot]
+		self.possible = possible
 		self.prev = None
 		self.next = None
 class Tree:
@@ -119,27 +120,31 @@ class Scheduler:
 		slotsAssigned = self.slotCheck(slotDomain, tutorDomain, selected)
 		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
 		# need to handle
-		assginment = self.maxSlots(slotsAssigned, slotDomain)
-		# print("FINAL ASSIGNMENT ", assginment)
+		possible = self.maxSlots(slotsAssigned, slotDomain)
+		# print("POSSIBLE ", possible)
 		# print("----- END ----- \n\n\n\n")
-		return assginment
+		return possible
 
 	def maxSlots(self, slotsAssigned, slotDomain):
 		maxSlots = 0
-		day = None
-		module = None
-		tutor = None
-		for slots in slotsAssigned:
-			for days in slotsAssigned[slots][1]:
-				if slotDomain[days] > maxSlots:
-					maxSlots = slotDomain[days]
-					day = days
-					module = slots
-					tutor = slotsAssigned[slots][0]
+		possible = []
+		try:
+			for slots in slotsAssigned:
+				for days in slotsAssigned[slots][1]:
+					if slotDomain[days] > maxSlots:
+						possible = []
+						maxSlots = slotDomain[days]
+						assignment = [slots, slotsAssigned[slots][0], days]
+						possible.append(assignment)
+					elif slotDomain[days] == maxSlots:
+						assignment = [slots, slotsAssigned[slots][0], days]
+						possible.append(assignment)
 			# need to handle the case where there are equal number of slots for many max days
 			# probably check for the least subjects covered by a tutor and select that
 			# the least subjects are also equal then choose random
-		return (module,tutor,day)
+		except:
+			return None
+		return possible
 
 	# if slot domain value is 0 then day should also be deleted
 	def slotCheck(self, slotDomain, tutorDomain, selected):
@@ -171,6 +176,33 @@ class Scheduler:
 		while(node is not None):
 			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], "module")
 			node = node.next
+	def backtrack(self, moduleDomain, tutorDomain, slotDomain, tree):
+		print("deleting", tree.leaf.possible[0])
+		del tree.leaf.possible[0]
+		moduleDomain[tree.leaf.assignment[0]] = self.eligibleTutors(tree.leaf.assignment[0], True)
+		tutorDomain[tree.leaf.assignment[1]][0].append(tree.leaf.assignment[2])
+		tutorDomain[tree.leaf.assignment[1]][1] +=1
+		if tree.leaf.assignment[2] in slotDomain:
+			slotDomain[tree.leaf.assignment[2]] +=1
+		else:
+			slotDomain[tree.leaf.assignment[2]] = 1
+		
+		if (tree.leaf.possible):
+			tree.leaf.assignment[0] = tree.leaf.possible[0][0]
+			tree.leaf.assignment[1] = tree.leaf.possible[0][1]
+			tree.leaf.assignment[2] = tree.leaf.possible[0][2]
+			tree.leaf.assignment[3] = slotDomain[tree.leaf.possible[0][2]]
+			del moduleDomain[tree.leaf.possible[0][0]]
+			slotDomain[tree.leaf.possible[0][2]] -=1
+			if(slotDomain[tree.leaf.possible[0][2]] == 0):
+				del slotDomain[tree.leaf.possible[0][2]]
+			tutorDomain[tree.leaf.possible[0][1]][0].remove(tree.leaf.possible[0][2])
+			tutorDomain[tree.leaf.possible[0][1]][1] -=1
+			return False
+		else:
+			tree.remove()
+			return True
+
 
 	def createSchedule(self):
 		#Do not change this line
@@ -186,21 +218,24 @@ class Scheduler:
 		for tutor in domain["tutors"]:
 			tutorDomain[tutor] = [domain["days"].copy(), 2]
 		tree = Tree()
+		backtracking = False
 		while(moduleDomain):
-			x = self.moduleChoose(moduleDomain, tutorDomain, slotDomain)
-			if not (x[0] == None or x[1] == None or x[2] == None):
-				tree.add(Node(x[0],x[1],x[2], slotDomain[x[2]]))
-				del moduleDomain[x[0]]
-				slotDomain[x[2]] -=1
-				if(slotDomain[x[2]] == 0):
-					del slotDomain[x[2]]
-				tutorDomain[x[1]][0].remove(x[2])
-				tutorDomain[x[1]][1] -=1
-				# print(x)
-				# print(tutorDomain[x[1]])
+			if not backtracking:
+				x = self.moduleChoose(moduleDomain, tutorDomain, slotDomain)
+				if not (x == None):
+					tree.add(Node(x[0][0],x[0][1],x[0][2], slotDomain[x[0][2]], x))
+					del moduleDomain[x[0][0]]
+					slotDomain[x[0][2]] -=1
+					if(slotDomain[x[0][2]] == 0):
+						del slotDomain[x[0][2]]
+					tutorDomain[x[0][1]][0].remove(x[0][2])
+					tutorDomain[x[0][1]][1] -=1
+				else:
+					backtracking = True
+					print("setting backtrack")
 			else:
-				print("backtrack")
-				# need to implement backtrack	
+				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
+				print("return backtrack", backtracking)
 		self.assignTree(tree, timetableObj)
 		#Here is where you schedule your timetable
 
