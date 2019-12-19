@@ -130,12 +130,15 @@ class Scheduler:
 		module = None
 		tutor = None
 		for slots in slotsAssigned:
-			# from the assigned slots for all the modules, finalise the one with the day having the most slots
-			if slotDomain[slotsAssigned[slots][1]] > maxSlots:
-				maxSlots = slotDomain[slotsAssigned[slots][1]]
-				day = slotsAssigned[slots][1]
-				module = slots
-				tutor = slotsAssigned[slots][0]
+			for days in slotsAssigned[slots][1]:
+				if slotDomain[days] > maxSlots:
+					maxSlots = slotDomain[days]
+					day = days
+					module = slots
+					tutor = slotsAssigned[slots][0]
+			# need to handle the case where there are equal number of slots for many max days
+			# probably check for the least subjects covered by a tutor and select that
+			# the least subjects are also equal then choose random
 		return (module,tutor,day)
 
 	# if slot domain value is 0 then day should also be deleted
@@ -145,14 +148,14 @@ class Scheduler:
 		for module in selected:
 			available[module] = {}
 			for tutor in selected[module]:
+				days = []
 				for day in slotDomain:
 					if day in tutorDomain[tutor][0]:
 						# can do a list of all the days and then choosing the one with the max slots
-						available[module] = [tutor, day]
+						days.append(day)
 						found = True
-						break
 				if found:
-					break
+					available[module] = [tutor, days]
 		# a dict of modules: and tutors with days available
 		return available
 
