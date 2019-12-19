@@ -5,6 +5,32 @@ import timetable
 import random
 import math
 
+class Node:
+	def __init__(self, module, tutor, day, slot):
+		self.assignment = (module, tutor, day, slot)
+		self.prev = None
+		self.next = None
+class Tree:
+	def __init__(self):
+		self.root = None
+		self.leaf = None
+	def add(self, node):
+		if(self.root == None):
+			self.root = node
+			self.leaf = node
+		else:
+			node.prev = self.leaf
+			self.leaf.next = node
+			self.leaf = node
+	def remove(self):
+		if self.leaf == None:
+			return None
+		else:
+			old = self.leaf
+			self.leaf = old.prev
+			self.leaf.next = None
+			return old
+
 class Scheduler:
 
 	def __init__(self,tutorList, moduleList):
@@ -56,6 +82,7 @@ class Scheduler:
 	def moduleChoose(self, moduleDomain, tutorDomain, slotDomain):
 		minTutors = math.inf
 		minModule = {}
+		# print("MODULE DOMAIN ", moduleDomain)
 		# choosing the module with the least tutors available
 		for module in moduleDomain:
 			if len(moduleDomain[module]) < minTutors:
@@ -66,6 +93,7 @@ class Scheduler:
 				minModule[module] = moduleDomain[module]
 		# from the modules chosen along with the tutors, choosing the tutor with the max available days
 		# which implies the max available slots - checking slots too
+		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
 		selected = {}
 		maxDays = -1
 		for module in minModule:
@@ -81,13 +109,19 @@ class Scheduler:
 					else:
 						selected[module] = []
 						selected[module].append(tutor)
-		if maxDays > 0:
-			print("possible")
-		else:
-			print("no possible soln") # if in the checking nothing changed
+		# print("FROM THE SHORTLISTED MODULES-TUTORS, SELECTING THE MODULE-TUTORS WHERE TUTORS HAVE THE MAX DAYS")
+		# print(selected)
+		# if maxDays > 0:
+		# 	print("")
+		# else:
+		# 	print("") # if in the checking nothing changed
+		# need to handle
 		slotsAssigned = self.slotCheck(slotDomain, tutorDomain, selected)
+		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
+		# need to handle
 		assginment = self.maxSlots(slotsAssigned, slotDomain)
-		
+		# print("FINAL ASSIGNMENT ", assginment)
+		# print("----- END ----- \n\n\n\n")
 		return assginment
 
 	def maxSlots(self, slotsAssigned, slotDomain):
@@ -113,14 +147,27 @@ class Scheduler:
 			for tutor in selected[module]:
 				for day in slotDomain:
 					if day in tutorDomain[tutor][0]:
+						# can do a list of all the days and then choosing the one with the max slots
 						available[module] = [tutor, day]
 						found = True
 						break
 				if found:
 					break
-		# a dict of modules: and tutors with days
+		# a dict of modules: and tutors with days available
 		return available
 
+	def printTree(self, tree):
+		node = tree.root
+		while(node is not None):
+			print(node.assignment)
+			node = node.next
+	
+	
+	def assignTree(self, tree, timetableObj):
+		node = tree.root
+		while(node is not None):
+			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], "module")
+			node = node.next
 
 	def createSchedule(self):
 		#Do not change this line
@@ -135,23 +182,23 @@ class Scheduler:
 		tutorDomain = {}
 		for tutor in domain["tutors"]:
 			tutorDomain[tutor] = [domain["days"].copy(), 2]
+		tree = Tree()
 		while(moduleDomain):
 			x = self.moduleChoose(moduleDomain, tutorDomain, slotDomain)
-			if(x[0] != None or x[1] != None or x[2] != None):
-				timetableObj.addSession(x[2], slotDomain[x[2]], x[1], x[0], "module")
+			if not (x[0] == None or x[1] == None or x[2] == None):
+				tree.add(Node(x[0],x[1],x[2], slotDomain[x[2]]))
 				del moduleDomain[x[0]]
 				slotDomain[x[2]] -=1
 				if(slotDomain[x[2]] == 0):
 					del slotDomain[x[2]]
 				tutorDomain[x[1]][0].remove(x[2])
 				tutorDomain[x[1]][1] -=1
-				print(x)
-				print(tutorDomain[x[1]])
+				# print(x)
+				# print(tutorDomain[x[1]])
 			else:
 				print("backtrack")
 				# need to implement backtrack	
-		print(slotDomain)
-		
+		self.assignTree(tree, timetableObj)
 		#Here is where you schedule your timetable
 
 		#This line generates a random timetable, that may not be valid. You can use this or delete it.
