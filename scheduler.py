@@ -169,15 +169,64 @@ class Scheduler:
 		while(node is not None):
 			print(node.assignment)
 			node = node.next
-	
-	
+
+	def mergeSortTutors(self, tutors):
+		if len(tutors)>1:
+			mid = len(tutors)//2
+			lefthalf = tutors[:mid]
+			righthalf = tutors[mid:]
+
+			self.mergeSortTutors(lefthalf)
+			self.mergeSortTutors(righthalf)
+			i=j=k=0
+			while i < len(lefthalf) and j < len(righthalf):
+				if len(lefthalf[i].expertise) < len(righthalf[j].expertise):
+					tutors[k] = lefthalf[i]
+					i+=1
+				else:
+					tutors[k] = righthalf[j]
+					j+=1
+				k+=1
+			while i < len(lefthalf):
+				tutors[k] = lefthalf[i]
+				i+=1
+				k+=1
+			while j < len(righthalf):
+				tutors[k] = righthalf[j]
+				j+=1
+				k+=1
+	def mergeSortModules(self, modules):
+		if len(modules)>1:
+			mid = len(modules)//2
+			lefthalf = modules[:mid]
+			righthalf = modules[mid:]
+
+			self.mergeSortModules(lefthalf)
+			self.mergeSortModules(righthalf)
+			i=j=k=0
+			while i < len(lefthalf) and j < len(righthalf):
+				if len(lefthalf[i].topics) < len(righthalf[j].topics):
+					modules[k] = lefthalf[i]
+					i+=1
+				else:
+					modules[k] = righthalf[j]
+					j+=1
+				k+=1
+			while i < len(lefthalf):
+				modules[k] = lefthalf[i]
+				i+=1
+				k+=1
+			while j < len(righthalf):
+				modules[k] = righthalf[j]
+				j+=1
+				k+=1	
 	def assignTree(self, tree, timetableObj):
 		node = tree.root
 		while(node is not None):
 			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], "module")
 			node = node.next
 	def backtrack(self, moduleDomain, tutorDomain, slotDomain, tree):
-		print("deleting", tree.leaf.possible[0])
+		# print("deleting", tree.leaf.possible[0])
 		del tree.leaf.possible[0]
 		moduleDomain[tree.leaf.assignment[0]] = self.eligibleTutors(tree.leaf.assignment[0], True)
 		tutorDomain[tree.leaf.assignment[1]][0].append(tree.leaf.assignment[2])
@@ -212,9 +261,11 @@ class Scheduler:
 		for day in domain["days"]:
 			slotDomain[day] = 5
 		moduleDomain = {}
+		# self.mergeSortModules(self.moduleList)
 		for module in domain["modules"]:
 			moduleDomain[module] = self.eligibleTutors(module, True)
 		tutorDomain = {}
+		self.mergeSortTutors(self.tutorList)
 		for tutor in domain["tutors"]:
 			tutorDomain[tutor] = [domain["days"].copy(), 2]
 		tree = Tree()
@@ -222,7 +273,7 @@ class Scheduler:
 		while(moduleDomain):
 			if not backtracking:
 				x = self.moduleChoose(moduleDomain, tutorDomain, slotDomain)
-				if not (x == None):
+				if not (x == None or len(x) == 0):
 					tree.add(Node(x[0][0],x[0][1],x[0][2], slotDomain[x[0][2]], x))
 					del moduleDomain[x[0][0]]
 					slotDomain[x[0][2]] -=1
@@ -232,10 +283,9 @@ class Scheduler:
 					tutorDomain[x[0][1]][1] -=1
 				else:
 					backtracking = True
-					print("setting backtrack")
 			else:
 				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
-				print("return backtrack", backtracking)
+				# print("return backtrack", backtracking)
 		self.assignTree(tree, timetableObj)
 		#Here is where you schedule your timetable
 
