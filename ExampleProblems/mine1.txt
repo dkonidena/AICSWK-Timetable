@@ -1,0 +1,8 @@
+Creek,Databases,Mathematics,Robotics
+Roush,Distributed Systems,Urban Science,Image Analysis,Networks,Artifical Intelligence,Architecture
+Robins,Complexity,Mathematics,Distributed Systems,Architecture,Databases
+===
+CS170,Robotics,Databases
+CS103,Distributed Systems,Urban Science
+CS430,Image Analysis,Urban Science
+CS472,Complexity,Mathematics

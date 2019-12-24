@@ -1,15 +1,15 @@
-Matte,Data Science,Complexity,Image Analysis,Distributed Systems,Artifical Intelligence,Networks
-Baughman,Networks,Urban Science,Databases,Data Science,Distributed Systems,Artifical Intelligence
-Bybee,Networks,Robotics,Complexity,Databases
 Bolles,Image Analysis,Data Science,Robotics,Architecture,Distributed Systems,Mathematics
-Hilbert,Robotics,Security,Networks,Artifical Intelligence,Architecture,Mathematics
 Almy,Security,Image Analysis,Artifical Intelligence,Mathematics,Complexity,Distributed Systems
-Loveless,Complexity,Urban Science,Mathematics,Artifical Intelligence,Robotics,Architecture
+Matte,Data Science,Complexity,Image Analysis,Distributed Systems,Artifical Intelligence,Networks
+Roush,Distributed Systems,Urban Science,Image Analysis,Networks,Artifical Intelligence
+Robins,Complexity,Mathematics,Distributed Systems,Architecture,Databases
+Baughman,Networks,Urban Science,Databases,Data Science,Distributed Systems
+Hilbert,Robotics,Security,Networks,Artifical Intelligence,Architecture,Mathematics
+Loveless,Complexity,Urban Science,Mathematics,Artifical Intelligence,Robotics
 Heyward,Image Analysis,Urban Science,Architecture,Databases,Data Science
 Threlkeld,Robotics,Security,Urban Science,Architecture
-Roush,Distributed Systems,Urban Science,Image Analysis,Networks,Artifical Intelligence,Architecture
 Stage,Mathematics,Robotics,Image Analysis,Distributed Systems,Databases
-Robins,Complexity,Mathematics,Distributed Systems,Architecture,Databases
+Bybee,Networks,Robotics,Complexity,Databases
 Castor,Urban Science,Architecture,Robotics,Algorithms
 ===
 CS446,Mathematics,Urban Science

@@ -4,6 +4,7 @@ import ReaderWriter
 import timetable
 import random
 import math
+import time
 
 class Node:
 	def __init__(self, module, tutor, day, slot, possible):
@@ -195,36 +196,13 @@ class Scheduler:
 				tutors[k] = righthalf[j]
 				j+=1
 				k+=1
-	def mergeSortModules(self, modules):
-		if len(modules)>1:
-			mid = len(modules)//2
-			lefthalf = modules[:mid]
-			righthalf = modules[mid:]
-
-			self.mergeSortModules(lefthalf)
-			self.mergeSortModules(righthalf)
-			i=j=k=0
-			while i < len(lefthalf) and j < len(righthalf):
-				if len(lefthalf[i].topics) < len(righthalf[j].topics):
-					modules[k] = lefthalf[i]
-					i+=1
-				else:
-					modules[k] = righthalf[j]
-					j+=1
-				k+=1
-			while i < len(lefthalf):
-				modules[k] = lefthalf[i]
-				i+=1
-				k+=1
-			while j < len(righthalf):
-				modules[k] = righthalf[j]
-				j+=1
-				k+=1	
+	
 	def assignTree(self, tree, timetableObj):
 		node = tree.root
 		while(node is not None):
 			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], "module")
 			node = node.next
+
 	def backtrack(self, moduleDomain, tutorDomain, slotDomain, tree):
 		# print("deleting", tree.leaf.possible[0])
 		del tree.leaf.possible[0]
@@ -255,13 +233,13 @@ class Scheduler:
 
 	def createSchedule(self):
 		#Do not change this line
+		start = time.time()
 		timetableObj = timetable.Timetable(1)
 		domain = self.domains([1,2,3,4,5], self.moduleList, self.tutorList)
 		slotDomain = {}
 		for day in domain["days"]:
 			slotDomain[day] = 5
 		moduleDomain = {}
-		# self.mergeSortModules(self.moduleList)
 		for module in domain["modules"]:
 			moduleDomain[module] = self.eligibleTutors(module, True)
 		tutorDomain = {}
@@ -269,6 +247,7 @@ class Scheduler:
 		for tutor in domain["tutors"]:
 			tutorDomain[tutor] = [domain["days"].copy(), 2]
 		tree = Tree()
+		back = 0
 		backtracking = False
 		while(moduleDomain):
 			if not backtracking:
@@ -282,16 +261,15 @@ class Scheduler:
 					tutorDomain[x[0][1]][0].remove(x[0][2])
 					tutorDomain[x[0][1]][1] -=1
 				else:
+					back+=1
 					backtracking = True
 			else:
 				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
-				# print("return backtrack", backtracking)
 		self.assignTree(tree, timetableObj)
-		#Here is where you schedule your timetable
 
-		#This line generates a random timetable, that may not be valid. You can use this or delete it.
-		# self.randomModSchedule(timetableObj)
-
+		end = time.time()
+		print("BACKTRACK ", back)
+		print("TIME ELAPSED ", end-start)
 		#Do not change this line
 		return timetableObj
 
@@ -303,8 +281,24 @@ class Scheduler:
 	#A tutor cannot teach more than 2 credits a day.
 	def createLabSchedule(self):
 		#Do not change this line
-		timetableObj = timetable.Timetable(2)
+		start = time.time()
 		#Here is where you schedule your timetable
+		timetableObj = timetable.Timetable(2)
+		domain = self.domains([1,2,3,4,5,6,7,8,9,10], self.moduleList, self.tutorList)
+		slotDomain = {}
+		for day in domain["days"]:
+			slotDomain[day] = 10
+		moduleDomain = {}
+		for module in domain["modules"]:
+			moduleDomain[module] = [self.eligibleTutors(module, True), self.eligibleTutors(module, False)]
+		tutorDomain = {}
+		# self.mergeSortTutors(self.tutorList)
+		dayCredits = []
+		for day in domain["days"]:
+			dayCredits.append([day, 2])
+		for tutor in domain["tutors"]:
+			tutorDomain[tutor] = [dayCredits.copy(), 4]
+		
 
 		#This line generates a random timetable, that may not be valid. You can use this or delete it.		
 		self.randomModAndLabSchedule(timetableObj)
