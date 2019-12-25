@@ -1,24 +1,24 @@
-Ostrom,Distributed Systems,Complexity,Artifical Intelligence,Architecture
-Galbreath,Databases,Artifical Intelligence,Complexity,Urban Science
-Ponton,Architecture,Databases,Algorithms,Complexity
-Brackin,Architecture,Complexity,Algorithms,Robotics
 Gallo,Databases,Security,Networks,Complexity
-Chancey,Artifical Intelligence,Robotics,Databases,Networks
-Hofman,Robotics,Complexity,Distributed Systems,Algorithms
-Bennett,Security,Distributed Systems,Algorithms,Networks
 Livermore,Data Science,Robotics,Networks,Security
-Shoup,Complexity,Distributed Systems,Data Science,Mathematics
-Brecht,Robotics,Artifical Intelligence,Algorithms,Architecture
-Tennyson,Security,Urban Science,Robotics,Image Analysis
 Nave,Urban Science,Databases,Architecture,Complexity
+Hess,Data Science,Architecture,Image Analysis,Artifical Intelligence
+Sturm,Distributed Systems,Security,Artifical Intelligence,Robotics
+Tennyson,Security,Urban Science,Robotics,Image Analysis
 Leighton,Algorithms,Data Science,Robotics,Complexity
+Firmin,Image Analysis,Data Science,Security,Networks
+Popham,Databases,Complexity,Networks,Algorithms
+Highfill,Image Analysis,Architecture,Networks,Algorithms
+Shoup,Complexity,Distributed Systems,Data Science,Mathematics
+Hofman,Robotics,Complexity,Distributed Systems,Algorithms
+Brecht,Robotics,Artifical Intelligence,Algorithms,Architecture
+Ponton,Architecture,Databases,Algorithms,Complexity
+Ostrom,Distributed Systems,Complexity,Artifical Intelligence,Architecture
+Brackin,Architecture,Complexity,Algorithms,Robotics
+Galbreath,Databases,Artifical Intelligence,Complexity,Urban Science
+Chancey,Artifical Intelligence,Robotics,Databases,Networks
+Bennett,Security,Distributed Systems,Algorithms,Networks
 Stevens,Security,Image Analysis,Complexity,Databases
 Prewitt,Complexity,Robotics,Algorithms,Security
-Firmin,Image Analysis,Data Science,Security,Networks
-Hess,Data Science,Architecture,Image Analysis,Artifical Intelligence
-Highfill,Image Analysis,Architecture,Networks,Algorithms
-Popham,Databases,Complexity,Networks,Algorithms
-Sturm,Distributed Systems,Security,Artifical Intelligence,Robotics
 ===
 CS257,Data Science,Robotics
 CS332,Complexity,Distributed Systems
