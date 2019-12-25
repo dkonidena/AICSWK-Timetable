@@ -405,7 +405,6 @@ class Scheduler:
 							del tutorDomain[x[0][1][0]][0][x[0][2]]
 						tutorDomain[x[0][1][0]][1] -=2
 					if sessionType == "lab":
-						print("lab")
 						moduleDomain[x[0][0]][1] = []
 						if len(moduleDomain[x[0][0]][0]) == 0:
 							del moduleDomain[x[0][0]]
