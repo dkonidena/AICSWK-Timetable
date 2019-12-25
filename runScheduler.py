@@ -18,14 +18,14 @@ import scheduler
 #based on which problem you are trying to solve, and changing which problem is loaded in. 
 
 rw = ReaderWriter.ReaderWriter()
-[tutorList, moduleList] = rw.readRequirements("ExampleProblems/Problem2.txt")
+[tutorList, moduleList] = rw.readRequirements("ExampleProblems/Problem8.txt")
 sch = scheduler.Scheduler(tutorList, moduleList)
 
 #this method will be used to create a schedule that solves task 1
-tt = sch.createSchedule()
+# tt = sch.createSchedule()
 
 #This method will be used to create a schedule that solves task 2
-#tt = sch.createLabSchedule()
+tt = sch.createLabSchedule()
 
 #this method will be used to create a schedule that solves task 3
 #tt = sch.createMinCostSchedule()

@@ -7,8 +7,8 @@ import math
 import time
 
 class Node:
-	def __init__(self, module, tutor, day, slot, possible):
-		self.assignment = [module, tutor, day, slot]
+	def __init__(self, module, tutor, day, slot, sessionType, possible):
+		self.assignment = [module, tutor, day, slot, sessionType]
 		self.possible = possible
 		self.prev = None
 		self.next = None
@@ -200,7 +200,7 @@ class Scheduler:
 	def assignTree(self, tree, timetableObj):
 		node = tree.root
 		while(node is not None):
-			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], "module")
+			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], node.assignment[4])
 			node = node.next
 
 	def backtrack(self, moduleDomain, tutorDomain, slotDomain, tree):
@@ -253,7 +253,7 @@ class Scheduler:
 			if not backtracking:
 				x = self.moduleChoose(moduleDomain, tutorDomain, slotDomain)
 				if not (x == None or len(x) == 0):
-					tree.add(Node(x[0][0],x[0][1],x[0][2], slotDomain[x[0][2]], x))
+					tree.add(Node(x[0][0],x[0][1],x[0][2], slotDomain[x[0][2]], "module", x))
 					del moduleDomain[x[0][0]]
 					slotDomain[x[0][2]] -=1
 					if(slotDomain[x[0][2]] == 0):
@@ -272,6 +272,91 @@ class Scheduler:
 		print("TIME ELAPSED ", end-start)
 		#Do not change this line
 		return timetableObj
+
+	def moduleLabChoose(self, moduleDomain, tutorDomain, slotDomain):
+		minTutors = math.inf
+		minModule = {}
+		# choosing the module with the least tutors available
+		for module in moduleDomain:
+			i = 0
+			while(i<len(moduleDomain[module])):
+				if len(moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+					minModule.clear()
+					if i == 0:
+						minModule[module] = (moduleDomain[module][i], "module")
+						minTutors = len(moduleDomain[module][i])
+					elif i == 1:
+						minModule[module] = (moduleDomain[module][i], "lab")
+						minTutors = len(moduleDomain[module][i])
+				elif len(moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+					if i == 0:
+						minModule[module] = (moduleDomain[module][i], "module")
+					elif i == 1:
+						minModule[module] = (moduleDomain[module][i], "lab")
+				i+=1
+		# from the modules chosen along with the tutors, choosing the tutor with the max available days
+		# which implies the max available slots - checking slots too
+		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
+		selected = {}
+		maxDays = -1
+		for module in minModule:
+			for tutor in minModule[module][0]:
+				if minModule[module][1] == "module":
+					if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] - 2 >= 0:
+						selected.clear()
+						selected[module] = []
+						selected[module].append((tutor,"module"))
+						maxDays = len(tutorDomain[tutor][0])
+					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 2 >= 0:
+						if module in selected:
+							selected[module].append((tutor,"module"))
+						else:
+							selected[module] = []
+							selected[module].append((tutor,"module"))
+				if minModule[module][1] == "lab":
+					if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] - 1 >= 0:
+						selected.clear()
+						selected[module] = []
+						selected[module].append((tutor,"lab"))
+						maxDays = len(tutorDomain[tutor][0])
+					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 1 >= 0:
+						if module in selected:
+							selected[module].append((tutor,"lab"))
+						else:
+							selected[module] = []
+							selected[module].append((tutor,"lab"))
+		# print("FROM THE SHORTLISTED MODULES-TUTORS, SELECTING THE MODULE-TUTORS WHERE TUTORS HAVE THE MAX DAYS")
+		# print(selected)
+		# if maxDays > 0:
+		# 	print("")
+		# else:
+		# 	print("") # if in the checking nothing changed
+		# need to handle
+		slotsAssigned = self.slotCheckLab(slotDomain, tutorDomain, selected)
+		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
+		# need to handle
+		possible = self.maxSlots(slotsAssigned, slotDomain)
+		# print("POSSIBLE ", possible)
+		# print("----- END ----- \n\n\n\n")
+		return possible	
+
+	def slotCheckLab(self, slotDomain, tutorDomain, selected):
+		available = {}
+		found = False
+		for module in selected:
+			available[module] = {}
+			for tutor in selected[module]:
+				days = []
+				for day in slotDomain:
+					if day in tutorDomain[tutor[0]][0]:
+						# can do a list of all the days and then choosing the one with the max slots
+						if tutorDomain[tutor[0]][0][day] > 0:
+							days.append(day)
+							found = True
+				if found:
+					available[module] = [tutor, days]
+		# a dict of modules: and tutors with days available
+		return available
 
 	#Now, we have introduced lab sessions. Each day now has ten sessions, and there is a lab session as well as a module session.
 	#All module and lab sessions must be assigned to a slot, and each module and lab session require a tutor.
@@ -293,15 +378,57 @@ class Scheduler:
 			moduleDomain[module] = [self.eligibleTutors(module, True), self.eligibleTutors(module, False)]
 		tutorDomain = {}
 		# self.mergeSortTutors(self.tutorList)
-		dayCredits = []
+		dayCredits = {}
 		for day in domain["days"]:
-			dayCredits.append([day, 2])
+			dayCredits[day] = 2
 		for tutor in domain["tutors"]:
 			tutorDomain[tutor] = [dayCredits.copy(), 4]
-		
+		tree = Tree()
+		back = 0
+		backtracking = False
+		while(moduleDomain):
+			if not backtracking:
+				x = self.moduleLabChoose(moduleDomain, tutorDomain, slotDomain)
+				if not (x == None or len(x) == 0):
+					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
+					sessionType = x[0][1][1]
+					tree.add(Node(x[0][0],x[0][1][0],x[0][2], slotDomain[x[0][2]],sessionType, x))
+					if sessionType == "module":
+						moduleDomain[x[0][0]][0] = []
+						if len(moduleDomain[x[0][0]][1]) == 0:
+							del moduleDomain[x[0][0]]
+						slotDomain[x[0][2]] -= 1
+						if(slotDomain[x[0][2]] == 0):
+							del slotDomain[x[0][2]]
+						tutorDomain[x[0][1][0]][0][x[0][2]] -=2
+						if tutorDomain[x[0][1][0]][0][x[0][2]] == 0:
+							del tutorDomain[x[0][1][0]][0][x[0][2]]
+						tutorDomain[x[0][1][0]][1] -=2
+					if sessionType == "lab":
+						print("lab")
+						moduleDomain[x[0][0]][1] = []
+						if len(moduleDomain[x[0][0]][0]) == 0:
+							del moduleDomain[x[0][0]]
+						slotDomain[x[0][2]] -= 1
+						if(slotDomain[x[0][2]] == 0):
+							del slotDomain[x[0][2]]
+						tutorDomain[x[0][1][0]][0][x[0][2]] -=1
+						if tutorDomain[x[0][1][0]][0][x[0][2]] == 0:
+							del tutorDomain[x[0][1][0]][0][x[0][2]]
+						tutorDomain[x[0][1][0]][1] -=1
+				else:
+					back+=1
+					backtracking = True
+			else:
+				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
+		self.assignTree(tree, timetableObj)
+
+		end = time.time()
+		print("BACKTRACK ", back)
+		print("TIME ELAPSED ", end-start)
 
 		#This line generates a random timetable, that may not be valid. You can use this or delete it.		
-		self.randomModAndLabSchedule(timetableObj)
+		# self.randomModAndLabSchedule(timetableObj)
 
 		#Do not change this line
 		return timetableObj
@@ -318,12 +445,68 @@ class Scheduler:
 	#You should consider the lecture material, particular the discussions on heuristics, and how you might develop a heuristic to help you here. 
 	def createMinCostSchedule(self):
 		#Do not change this line
-		timetableObj = timetable.Timetable(3)
-
+		start = time.time()
 		#Here is where you schedule your timetable
+		timetableObj = timetable.Timetable(2)
+		domain = self.domains([1,2,3,4,5,6,7,8,9,10], self.moduleList, self.tutorList)
+		slotDomain = {}
+		for day in domain["days"]:
+			slotDomain[day] = 10
+		moduleDomain = {}
+		for module in domain["modules"]:
+			moduleDomain[module] = [self.eligibleTutors(module, True), self.eligibleTutors(module, False)]
+		tutorDomain = {}
+		# self.mergeSortTutors(self.tutorList)
+		dayCredits = {}
+		for day in domain["days"]:
+			dayCredits[day] = 2
+		for tutor in domain["tutors"]:
+			tutorDomain[tutor] = [dayCredits.copy(), 4]
+		tree = Tree()
+		back = 0
+		backtracking = False
+		while(moduleDomain):
+			if not backtracking:
+				x = self.moduleLabChoose(moduleDomain, tutorDomain, slotDomain)
+				if not (x == None or len(x) == 0):
+					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
+					sessionType = x[0][1][1]
+					tree.add(Node(x[0][0],x[0][1][0],x[0][2], slotDomain[x[0][2]],sessionType, x))
+					if sessionType == "module":
+						moduleDomain[x[0][0]][0] = []
+						if len(moduleDomain[x[0][0]][1]) == 0:
+							del moduleDomain[x[0][0]]
+						slotDomain[x[0][2]] -= 1
+						if(slotDomain[x[0][2]] == 0):
+							del slotDomain[x[0][2]]
+						tutorDomain[x[0][1][0]][0][x[0][2]] -=2
+						if tutorDomain[x[0][1][0]][0][x[0][2]] == 0:
+							del tutorDomain[x[0][1][0]][0][x[0][2]]
+						tutorDomain[x[0][1][0]][1] -=2
+					if sessionType == "lab":
+						moduleDomain[x[0][0]][1] = []
+						if len(moduleDomain[x[0][0]][0]) == 0:
+							del moduleDomain[x[0][0]]
+						slotDomain[x[0][2]] -= 1
+						if(slotDomain[x[0][2]] == 0):
+							del slotDomain[x[0][2]]
+						tutorDomain[x[0][1][0]][0][x[0][2]] -=1
+						if tutorDomain[x[0][1][0]][0][x[0][2]] == 0:
+							del tutorDomain[x[0][1][0]][0][x[0][2]]
+						tutorDomain[x[0][1][0]][1] -=1
+				else:
+					back+=1
+					backtracking = True
+			else:
+				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
+		self.assignTree(tree, timetableObj)
 
-		#This line generates a random timetable, that may not be valid. You can use this or delete it.
-		self.randomModAndLabSchedule(timetableObj)
+		end = time.time()
+		print("BACKTRACK ", back)
+		print("TIME ELAPSED ", end-start)
+
+		#This line generates a random timetable, that may not be valid. You can use this or delete it.		
+		# self.randomModAndLabSchedule(timetableObj)
 
 		#Do not change this line
 		return timetableObj
