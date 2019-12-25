@@ -357,6 +357,70 @@ class Scheduler:
 					available[module] = [tutor, days]
 		# a dict of modules: and tutors with days available
 		return available
+	def backtrackLab(self, moduleDomain, tutorDomain, slotDomain, tree):
+		# print("deleting", tree.leaf.possible[0])
+		del tree.leaf.possible[0]
+		sessionType = tree.leaf.assignment[4]
+		if sessionType == "module":
+			if tree.leaf.assignment[0] in moduleDomain:
+				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
+			else :
+				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
+				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
+			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
+			else :
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2
+			tutorDomain[tree.leaf.assignment[1]][1] +=2
+		if sessionType == "lab":
+			if tree.leaf.assignment[0] in moduleDomain:
+				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
+			else :
+				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
+				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
+			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
+			else :
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
+			tutorDomain[tree.leaf.assignment[1]][1] +=1
+		if tree.leaf.assignment[2] in slotDomain:
+			slotDomain[tree.leaf.assignment[2]] +=1
+		else:
+			slotDomain[tree.leaf.assignment[2]] = 1
+		
+		if (tree.leaf.possible):
+			session = tree.leaf.possible[0][1][1]
+			tree.leaf.assignment[0] = tree.leaf.possible[0][0]
+			tree.leaf.assignment[1] = tree.leaf.possible[0][1][0]
+			tree.leaf.assignment[2] = tree.leaf.possible[0][2]
+			tree.leaf.assignment[3] = slotDomain[tree.leaf.possible[0][2]]
+			tree.leaf.assignment[4] = session
+			if session == "module":
+				moduleDomain[tree.leaf.possible[0][0]][0] = []
+				if len(moduleDomain[tree.leaf.possible[0][0]][1]) == 0:
+					del moduleDomain[tree.leaf.possible[0][0]]
+				slotDomain[tree.leaf.possible[0][2]] -= 1
+				if(slotDomain[tree.leaf.possible[0][2]] == 0):
+					del slotDomain[tree.leaf.possible[0][2]]
+				tutorDomain[tree.leaf.possible[0][1][0]][0][tree.leaf.possible[0][2]] -=2
+				if tutorDomain[tree.leaf.possible[0][1][0]][0][tree.leaf.possible[0][2]] == 0:
+					del tutorDomain[tree.leaf.possible[0][1][0]][0][tree.leaf.possible[0][2]]
+				tutorDomain[tree.leaf.possible[0][1][0]][1] -=2
+			if session == "lab":
+				moduleDomain[tree.leaf.possible[0][0]][1] = []
+				if len(moduleDomain[tree.leaf.possible[0][0]][0]) == 0:
+					del moduleDomain[tree.leaf.possible[0][0]]
+				slotDomain[tree.leaf.possible[0][2]] -= 1
+				if(slotDomain[tree.leaf.possible[0][2]] == 0):
+					del slotDomain[tree.leaf.possible[0][2]]
+				tutorDomain[tree.leaf.possible[0][1][0]][0][tree.leaf.possible[0][2]] -=1
+				if tutorDomain[tree.leaf.possible[0][1][0]][0][tree.leaf.possible[0][2]] == 0:
+					del tutorDomain[tree.leaf.possible[0][1][0]][0][tree.leaf.possible[0][2]]
+				tutorDomain[tree.leaf.possible[0][1][0]][1] -=1
+			return False
+		else:
+			tree.remove()
+			return True
 
 	#Now, we have introduced lab sessions. Each day now has ten sessions, and there is a lab session as well as a module session.
 	#All module and lab sessions must be assigned to a slot, and each module and lab session require a tutor.
@@ -377,7 +441,7 @@ class Scheduler:
 		for module in domain["modules"]:
 			moduleDomain[module] = [self.eligibleTutors(module, True), self.eligibleTutors(module, False)]
 		tutorDomain = {}
-		# self.mergeSortTutors(self.tutorList)
+		self.mergeSortTutors(self.tutorList)
 		dayCredits = {}
 		for day in domain["days"]:
 			dayCredits[day] = 2
@@ -419,7 +483,7 @@ class Scheduler:
 					back+=1
 					backtracking = True
 			else:
-				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
+				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree)
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
@@ -575,28 +639,3 @@ class Scheduler:
 			if(self.tutorCanTeach(x, module, labOrModule)):
 				tutors.append(x)
 		return tutors		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
