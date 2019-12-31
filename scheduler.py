@@ -472,10 +472,6 @@ class Scheduler:
 						if tutorDomain[x[0][1][0]][0][x[0][2]] == 0:
 							del tutorDomain[x[0][1][0]][0][x[0][2]]
 						tutorDomain[x[0][1][0]][1] -=2
-						if tutorDomain[x[0][1][0]][1] == 0:
-							for module in moduleDomain:
-								if x[0][1][0] in moduleDomain[module][0]:
-									moduleDomain[module][0].remove(x[0][1][0]) 
 					if sessionType == "lab":
 						moduleDomain[x[0][0]][1] = []
 						if len(moduleDomain[x[0][0]][0]) == 0:
@@ -487,10 +483,12 @@ class Scheduler:
 						if tutorDomain[x[0][1][0]][0][x[0][2]] == 0:
 							del tutorDomain[x[0][1][0]][0][x[0][2]]
 						tutorDomain[x[0][1][0]][1] -=1
-						if tutorDomain[x[0][1][0]][1] == 0:
-							for module in moduleDomain:
-								if x[0][1][0] in moduleDomain[module][1]:
-									moduleDomain[module][1].remove(x[0][1][0])
+					if tutorDomain[x[0][1][0]][1] == 0:
+						for module in moduleDomain:
+							if x[0][1][0] in moduleDomain[module][0]:
+								moduleDomain[module][0].remove(x[0][1][0]) 
+							if x[0][1][0] in moduleDomain[module][1]:
+								moduleDomain[module][1].remove(x[0][1][0])
 				else:
 					back+=1
 					backtracking = True
@@ -531,7 +529,7 @@ class Scheduler:
 		for module in domain["modules"]:
 			moduleDomain[module] = [self.eligibleTutors(module, True), self.eligibleTutors(module, False)]
 		tutorDomain = {}
-		# self.mergeSortTutors(self.tutorList)
+		self.mergeSortTutors(self.tutorList)
 		dayCredits = {}
 		for day in domain["days"]:
 			dayCredits[day] = 2
@@ -569,11 +567,17 @@ class Scheduler:
 						if tutorDomain[x[0][1][0]][0][x[0][2]] == 0:
 							del tutorDomain[x[0][1][0]][0][x[0][2]]
 						tutorDomain[x[0][1][0]][1] -=1
+					if tutorDomain[x[0][1][0]][1] == 0:
+						for module in moduleDomain:
+							if x[0][1][0] in moduleDomain[module][0]:
+								moduleDomain[module][0].remove(x[0][1][0]) 
+							if x[0][1][0] in moduleDomain[module][1]:
+								moduleDomain[module][1].remove(x[0][1][0])
 				else:
 					back+=1
 					backtracking = True
 			else:
-				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
+				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree)
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
