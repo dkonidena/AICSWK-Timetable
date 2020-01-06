@@ -101,12 +101,12 @@ class Scheduler:
 		maxDays = -1
 		for module in minModule:
 			for tutor in minModule[module]:
-				if len(tutorDomain[tutor][0]) > maxDays:
+				if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] > 0:
 					selected.clear()
 					selected[module] = []
 					selected[module].append(tutor)
 					maxDays = len(tutorDomain[tutor][0])
-				elif len(tutorDomain[tutor][0]) == maxDays:
+				elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] > 0:
 					if module in selected:
 						selected[module].append(tutor)
 					else:
@@ -307,7 +307,7 @@ class Scheduler:
 		for module in minModule:
 			for tutor in minModule[module][0]:
 				if minModule[module][1] == "module":
-					if len(tutorDomain[tutor][0]) < maxDays:
+					if len(tutorDomain[tutor][0]) < maxDays and tutorDomain[tutor][1] - 2 >= 0:
 						selected.clear()
 						selected[module] = []
 						selected[module].append((tutor,"module"))
@@ -319,7 +319,7 @@ class Scheduler:
 							selected[module] = []
 							selected[module].append((tutor,"module"))
 				if minModule[module][1] == "lab":
-					if len(tutorDomain[tutor][0]) < maxDays:
+					if len(tutorDomain[tutor][0]) < maxDays and tutorDomain[tutor][1] - 1 >= 0:
 						selected.clear()
 						selected[module] = []
 						selected[module].append((tutor,"lab"))
