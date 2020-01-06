@@ -101,12 +101,12 @@ class Scheduler:
 		maxDays = -1
 		for module in minModule:
 			for tutor in minModule[module]:
-				if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] > 0:
+				if len(tutorDomain[tutor][0]) > maxDays:
 					selected.clear()
 					selected[module] = []
 					selected[module].append(tutor)
 					maxDays = len(tutorDomain[tutor][0])
-				elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] > 0:
+				elif len(tutorDomain[tutor][0]) == maxDays:
 					if module in selected:
 						selected[module].append(tutor)
 					else:
@@ -303,28 +303,28 @@ class Scheduler:
 		# which implies the max available slots - checking slots too
 		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
 		selected = {}
-		maxDays = -1
+		maxDays = math.inf
 		for module in minModule:
 			for tutor in minModule[module][0]:
 				if minModule[module][1] == "module":
-					if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] - 2 >= 0:
+					if len(tutorDomain[tutor][0]) < maxDays:
 						selected.clear()
 						selected[module] = []
 						selected[module].append((tutor,"module"))
 						maxDays = len(tutorDomain[tutor][0])
-					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 2 >= 0:
+					elif len(tutorDomain[tutor][0]) == maxDays:
 						if module in selected:
 							selected[module].append((tutor,"module"))
 						else:
 							selected[module] = []
 							selected[module].append((tutor,"module"))
 				if minModule[module][1] == "lab":
-					if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] - 1 >= 0:
+					if len(tutorDomain[tutor][0]) < maxDays:
 						selected.clear()
 						selected[module] = []
 						selected[module].append((tutor,"lab"))
 						maxDays = len(tutorDomain[tutor][0])
-					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 1 >= 0:
+					elif len(tutorDomain[tutor][0]) == maxDays:
 						if module in selected:
 							selected[module].append((tutor,"lab"))
 						else:
@@ -513,7 +513,7 @@ class Scheduler:
 	def searchPossible(self, possible, minCost):
 		if minCost:
 			# need to write the code to select the best according to the cost cosntraints
-			return len(possible) - 1
+			return math.floor((len(possible))/2)
 		else:
 			return 0
 
