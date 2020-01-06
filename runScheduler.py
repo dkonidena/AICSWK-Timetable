@@ -3,6 +3,7 @@ import tutor
 import ReaderWriter
 import timetable
 import scheduler
+import os
 
 #This file allows you to test your schedulers. tt.scheduleChecker will return false if your schedule is not legal.
 #It will also print a message displaying the constraint being violated by the schedule. 
@@ -16,24 +17,33 @@ import scheduler
 
 #Overall, the only changes that need to be made to this file is commenting and uncommenting the correct method call
 #based on which problem you are trying to solve, and changing which problem is loaded in. 
+x = [d for d in os.listdir("ExampleProblems")]
+for problem in x:
+	if problem != ".DS_Store" and problem != "edges" and problem != "Problem1.txt":
 
-rw = ReaderWriter.ReaderWriter()
-[tutorList, moduleList] = rw.readRequirements("ExampleProblems/Problem4.txt")
-sch = scheduler.Scheduler(tutorList, moduleList)
+		print(problem)
+		rw = ReaderWriter.ReaderWriter()
+		[tutorList, moduleList] = rw.readRequirements("ExampleProblems/"+problem)
+		sch = scheduler.Scheduler(tutorList, moduleList)
 
-#this method will be used to create a schedule that solves task 1
-# tt = sch.createSchedule()
+		#this method will be used to create a schedule that solves task 1
+		# tt = sch.createSchedule()
 
-#This method will be used to create a schedule that solves task 2
-# tt = sch.createLabSchedule()
+		#This method will be used to create a schedule that solves task 2
+		# tt = sch.createLabSchedule()
 
-#this method will be used to create a schedule that solves task 3
-tt = sch.createMinCostSchedule()
+		#this method will be used to create a schedule that solves task 3
+		tt = sch.createMinCostSchedule()
 
-print(str(tt.schedule))
-if tt.scheduleChecker(tutorList, moduleList):
-	print("Schedule is legal.")
-	print("Schedule has a cost of " + str(tt.cost))
+		# print(str(tt.schedule))
+		if tt.scheduleChecker(tutorList, moduleList):
+			print("Schedule is legal.")
+			print("Schedule has a cost of " + str(tt.cost))
+			print("\n\n")
+		else:
+			print("PROBLEM")
+			print(problem)
+			break
 
 
-	print(str(tt.schedule))
+	# print(str(tt.schedule))
