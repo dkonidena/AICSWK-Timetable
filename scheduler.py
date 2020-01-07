@@ -303,6 +303,72 @@ class Scheduler:
 		# which implies the min available slots - checking slots too
 		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
 		selected = {}
+		maxDays = -1
+		for module in minModule:
+			for tutor in minModule[module][0]:
+				if minModule[module][1] == "module":
+					if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] - 2 >= 0:
+						selected.clear()
+						selected[module] = []
+						selected[module].append((tutor,"module"))
+						maxDays = len(tutorDomain[tutor][0])
+					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 2 >= 0:
+						if module in selected:
+							selected[module].append((tutor,"module"))
+						else:
+							selected[module] = []
+							selected[module].append((tutor,"module"))
+				if minModule[module][1] == "lab":
+					if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] - 1 >= 0:
+						selected.clear()
+						selected[module] = []
+						selected[module].append((tutor,"lab"))
+						maxDays = len(tutorDomain[tutor][0])
+					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 1 >= 0:
+						if module in selected:
+							selected[module].append((tutor,"lab"))
+						else:
+							selected[module] = []
+							selected[module].append((tutor,"lab"))
+		# print("FROM THE SHORTLISTED MODULES-TUTORS, SELECTING THE MODULE-TUTORS WHERE TUTORS HAVE THE MAX DAYS")
+		# print(selected)
+		# if maxDays > 0:
+		# 	print("")
+		# else:
+		# 	print("") # if in the checking nothing changed
+		# need to handle
+		slotsAssigned = self.slotCheckLab(slotDomain, tutorDomain, selected)
+		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
+		# need to handle
+		possible = self.maxSlots(slotsAssigned, slotDomain)
+		# print("POSSIBLE ", possible)
+		# print("----- END ----- \n\n\n\n")
+		return possible	
+	def moduleMinCost(self, moduleDomain, tutorDomain, slotDomain):
+		minTutors = math.inf
+		minModule = {}
+		# choosing the module with the least tutors available
+		for module in moduleDomain:
+			i = 0
+			while(i<len(moduleDomain[module])):
+				if len(moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+					minModule.clear()
+					if i == 0:
+						minModule[module] = (moduleDomain[module][i], "module")
+						minTutors = len(moduleDomain[module][i])
+					elif i == 1:
+						minModule[module] = (moduleDomain[module][i], "lab")
+						minTutors = len(moduleDomain[module][i])
+				elif len(moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+					if i == 0:
+						minModule[module] = (moduleDomain[module][i], "module")
+					elif i == 1:
+						minModule[module] = (moduleDomain[module][i], "lab")
+				i+=1
+		# from the modules chosen along with the tutors, choosing the tutor with the min available days
+		# which implies the min available slots - checking slots too
+		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
+		selected = {}
 		maxDays = math.inf
 		for module in minModule:
 			for tutor in minModule[module][0]:
@@ -555,9 +621,9 @@ class Scheduler:
 				tutor = assignment[1][0]
 				sessionType = assignment[1][1]
 				if sessionType == "module":
-					if tutor not in tutorModules:
-						bestDays = self.nextDays(tutor, tutorDomain, True)
-						tutorModules[tutor] = bestDays
+					# if tutor not in tutorModules:
+					bestDays = self.nextDays(tutor, tutorDomain, True)
+					tutorModules[tutor] = bestDays
 				if sessionType == "lab":
 					if tutor not in tutorLabs:
 						bestDays = self.nextDays(tutor, tutorDomain, False)
@@ -636,7 +702,7 @@ class Scheduler:
 		backtracking = False
 		while(moduleDomain):
 			if not backtracking:
-				x = self.moduleLabChoose(moduleDomain, tutorDomain, slotDomain)
+				x = self.moduleMinCost(moduleDomain, tutorDomain, slotDomain)
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
 					index = self.searchPossible(x, True, tutorDomain)
