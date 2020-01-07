@@ -299,8 +299,8 @@ class Scheduler:
 					elif i == 1:
 						minModule[module] = (moduleDomain[module][i], "lab")
 				i+=1
-		# from the modules chosen along with the tutors, choosing the tutor with the max available days
-		# which implies the max available slots - checking slots too
+		# from the modules chosen along with the tutors, choosing the tutor with the min available days
+		# which implies the min available slots - checking slots too
 		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
 		selected = {}
 		maxDays = math.inf
@@ -312,7 +312,7 @@ class Scheduler:
 						selected[module] = []
 						selected[module].append((tutor,"module"))
 						maxDays = len(tutorDomain[tutor][0])
-					elif len(tutorDomain[tutor][0]) == maxDays:
+					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 2 >= 0:
 						if module in selected:
 							selected[module].append((tutor,"module"))
 						else:
@@ -324,7 +324,7 @@ class Scheduler:
 						selected[module] = []
 						selected[module].append((tutor,"lab"))
 						maxDays = len(tutorDomain[tutor][0])
-					elif len(tutorDomain[tutor][0]) == maxDays:
+					elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 1 >= 0:
 						if module in selected:
 							selected[module].append((tutor,"lab"))
 						else:
@@ -355,9 +355,15 @@ class Scheduler:
 				for day in slotDomain:
 					if day in tutorDomain[tutor[0]][0]:
 						# can do a list of all the days and then choosing the one with the max slots
-						if tutorDomain[tutor[0]][0][day] > 0:
-							days.append(day)
-							found = True
+						if tutor[1] == "module":
+							if tutorDomain[tutor[0]][0][day] - 2 >= 0:
+								days.append(day)
+								found = True
+						elif tutor[1] == "lab":
+							if tutorDomain[tutor[0]][0][day] - 1 >= 0:
+								days.append(day)
+								found = True
+
 				if found:
 					available[module] = [tutor, days]
 		# a dict of modules: and tutors with days available
@@ -395,7 +401,7 @@ class Scheduler:
 			slotDomain[tree.leaf.assignment[2]] = 1
 		
 		if (tree.leaf.possible):
-			newIndex = self.searchPossible(tree.leaf.possible, minCost)
+			newIndex = self.searchPossible(tree.leaf.possible, minCost, tutorDomain)
 			session = tree.leaf.possible[newIndex][1][1]
 			tree.leaf.assignment[0] = tree.leaf.possible[newIndex][0]
 			tree.leaf.assignment[1] = tree.leaf.possible[newIndex][1][0]
@@ -463,7 +469,7 @@ class Scheduler:
 				x = self.moduleLabChoose(moduleDomain, tutorDomain, slotDomain)
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
-					index = self.searchPossible(x, False)
+					index = self.searchPossible(x, False, tutorDomain)
 					sessionType = x[index][1][1]
 					tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, x, index))
 					if sessionType == "module":
@@ -498,7 +504,7 @@ class Scheduler:
 					backtracking = True
 			else:
 				back+=1
-				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree, True)
+				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree, False)
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
@@ -510,12 +516,89 @@ class Scheduler:
 
 		#Do not change this line
 		return timetableObj
-	def searchPossible(self, possible, minCost):
-		if minCost:
-			# need to write the code to select the best according to the cost cosntraints
-			return math.floor((len(possible))/2)
+
+	def dayAfter(self, day):
+		days = {"Monday":"Tuesday", "Tuesday":"Wednesday", "Wednesday":"Thursday", "Thursday":"Friday", "Friday":"Monday"}
+		return days[day]
+	def dayBefore(self, day):
+		days = {"Monday":"Friday", "Tuesday":"Monday", "Wednesday":"Tuesday", "Thursday":"Wednesday", "Friday":"Thursday"}
+		return days[day]
+	def nextDays(self, tutor, tutorDomain, module):
+		if module:
+			days = []
+			for day in tutorDomain[tutor][2]:
+				if tutorDomain[tutor][2][day] == -1:
+					if day != "Friday":
+						if self.dayAfter(day) not in days:
+							days.append(self.dayAfter(day))
+					# if day != "Monday":
+					# 	if self.dayBefore(day) not in days:
+					# 		days.append(self.dayBefore(day))
 		else:
-			return 0
+			days = []
+			for day in tutorDomain[tutor][2]:
+				if tutorDomain[tutor][2][day] < 2 and tutorDomain[tutor][2][day] > 0:
+					days.append(day)
+		return days
+
+	def searchPossible(self, possible, minCost, tutorDomain):
+		if minCost:
+			i = 0
+			max = -1
+			moduleIndices = []
+			labIndices = []
+			tutorModules = {}
+			tutorLabs = {}
+			maxTutors = []
+			while(i < len(possible)):
+				assignment = possible[i]
+				tutor = assignment[1][0]
+				sessionType = assignment[1][1]
+				if sessionType == "module":
+					if tutor not in tutorModules:
+						bestDays = self.nextDays(tutor, tutorDomain, True)
+						tutorModules[tutor] = bestDays
+				if sessionType == "lab":
+					if tutor not in tutorLabs:
+						bestDays = self.nextDays(tutor, tutorDomain, False)
+						tutorLabs[tutor] = bestDays
+					if tutorDomain[tutor][4] > max:
+						maxTutors = []
+						maxTutors.append(tutor)
+						max = tutorDomain[tutor][4]
+					elif tutorDomain[tutor][4] == max:
+						if tutor not in maxTutors:
+							maxTutors.append(tutor)
+				i+=1
+			i=0
+			while(i<len(possible)):
+				assignment = possible[i]
+				tutor = assignment[1][0]
+				day = assignment[2]
+				sessionType = assignment[1][1]
+				if sessionType == "module":
+					if day in tutorModules[tutor]:
+						moduleIndices.append(i)
+				if sessionType == "lab":
+					if tutor in maxTutors:
+						if day in tutorLabs[tutor]:
+							labIndices.append(i)
+				i+=1
+			if moduleIndices or labIndices:
+				if len(moduleIndices) > len(labIndices):
+					if moduleIndices:
+						return moduleIndices[0]
+					elif labIndices:
+						return labIndices[0]
+				else:
+					if labIndices:
+						return labIndices[0]
+					elif moduleIndices:
+						return moduleIndices[0]
+			else:
+				return 0
+		else:
+			return math.floor(len(possible)/2)
 
 	#It costs £500 to hire a tutor for a single module.
 	#If we hire a tutor to teach a 2nd module, it only costs £300. (meaning 2 modules cost £800 compared to £1000)
@@ -544,8 +627,10 @@ class Scheduler:
 		dayCredits = {}
 		for day in domain["days"]:
 			dayCredits[day] = 2
+		# tutor domain (2) -> if the value is 0 means that its been occupied by a module, if no day then labs		
+		# tutordomain(3) -> no of modules (4) -> no of labs
 		for tutor in domain["tutors"]:
-			tutorDomain[tutor] = [dayCredits.copy(), 4]
+			tutorDomain[tutor] = [dayCredits.copy(), 4, dayCredits.copy(), 0, 0]
 		tree = Tree()
 		back = 0
 		backtracking = False
@@ -554,7 +639,7 @@ class Scheduler:
 				x = self.moduleLabChoose(moduleDomain, tutorDomain, slotDomain)
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
-					index = self.searchPossible(x, True)
+					index = self.searchPossible(x, True, tutorDomain)
 					sessionType = x[index][1][1]
 					tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, x, index))
 					if sessionType == "module":
@@ -568,6 +653,8 @@ class Scheduler:
 						if tutorDomain[x[index][1][0]][0][x[index][2]] == 0:
 							del tutorDomain[x[index][1][0]][0][x[index][2]]
 						tutorDomain[x[index][1][0]][1] -=2
+						tutorDomain[x[index][1][0]][3] +=1
+						tutorDomain[x[index][1][0]][2][x[index][2]] -=3
 					if sessionType == "lab":
 						moduleDomain[x[index][0]][1] = []
 						if len(moduleDomain[x[index][0]][0]) == 0:
@@ -579,6 +666,8 @@ class Scheduler:
 						if tutorDomain[x[index][1][0]][0][x[index][2]] == 0:
 							del tutorDomain[x[index][1][0]][0][x[index][2]]
 						tutorDomain[x[index][1][0]][1] -=1
+						tutorDomain[x[index][1][0]][4] +=1
+						tutorDomain[x[index][1][0]][2][x[index][2]] -=1
 					if tutorDomain[x[index][1][0]][1] == 0:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
