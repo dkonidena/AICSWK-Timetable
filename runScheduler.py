@@ -17,23 +17,24 @@ import os
 
 #Overall, the only changes that need to be made to this file is commenting and uncommenting the correct method call
 #based on which problem you are trying to solve, and changing which problem is loaded in. 
-x = [d for d in os.listdir("ExampleProblems")]
+path = "cs255-examples-master/"
+x = [d for d in os.listdir(path)]
 for problem in x:
-	if problem != ".DS_Store" and problem != "edges" and problem != "Problem1.txt":
+	if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges" and problem != "Problem1.txt":
 
 		print(problem)
 		rw = ReaderWriter.ReaderWriter()
-		[tutorList, moduleList] = rw.readRequirements("ExampleProblems/"+problem)
+		[tutorList, moduleList] = rw.readRequirements(path+problem)
 		sch = scheduler.Scheduler(tutorList, moduleList)
 
 		#this method will be used to create a schedule that solves task 1
-		# tt = sch.createSchedule()
+		tt = sch.createSchedule()
 
 		#This method will be used to create a schedule that solves task 2
 		# tt = sch.createLabSchedule()
 
 		#this method will be used to create a schedule that solves task 3
-		tt = sch.createMinCostSchedule()
+		# tt = sch.createMinCostSchedule()
 
 		# print(str(tt.schedule))
 		if tt.scheduleChecker(tutorList, moduleList):
