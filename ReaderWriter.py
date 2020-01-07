@@ -35,6 +35,8 @@ class ReaderWriter:
 							topics.append(line[i])
 						mod = module.Module(name=line[0], topics=topics)
 						moduleList.append(mod)
+						if len(moduleList) == 25:
+  							break
 
 		#returns a list of tutor and module objects
 		return [tutorList, moduleList]
