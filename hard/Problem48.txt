@@ -1,0 +1,102 @@
+Tutor0,Topic9,Topic7,Topic3,Topic13,Topic4,Topic1,Topic14,Topic10
+Tutor1,Topic9,Topic5,Topic2,Topic7,Topic4,Topic14,Topic10,Topic6,Topic12
+Tutor2,Topic2,Topic0,Topic7,Topic3,Topic4,Topic1,Topic14
+Tutor3,Topic9,Topic8,Topic5,Topic0,Topic3,Topic14,Topic11,Topic6,Topic12
+Tutor4,Topic9,Topic8,Topic2,Topic1
+Tutor5,Topic5,Topic8,Topic2,Topic7,Topic3,Topic4,Topic1,Topic10,Topic6,Topic12
+Tutor6,Topic3,Topic4,Topic1,Topic10,Topic6
+Tutor7,Topic5,Topic14,Topic0
+Tutor8,Topic10,Topic5,Topic1,Topic4
+Tutor9,Topic9,Topic6,Topic1
+Tutor10,Topic5,Topic8,Topic0,Topic4,Topic11
+Tutor11,Topic9,Topic8,Topic7,Topic3,Topic14,Topic1,Topic10,Topic6,Topic12
+Tutor12,Topic5,Topic2,Topic8,Topic0,Topic7,Topic13,Topic1,Topic14,Topic11
+Tutor13,Topic4,Topic2,Topic14,Topic1
+Tutor14,Topic9,Topic2,Topic0,Topic7,Topic3,Topic13,Topic4,Topic1,Topic11,Topic6,Topic12
+Tutor15,Topic8,Topic5,Topic3,Topic14,Topic11,Topic10,Topic12
+Tutor16,Topic5
+Tutor17,Topic9,Topic8,Topic0,Topic3,Topic4,Topic11,Topic10,Topic6,Topic12
+Tutor18,Topic5
+Tutor19,Topic9,Topic8,Topic2,Topic5,Topic7,Topic4,Topic1,Topic14,Topic12
+Tutor20,Topic8,Topic0,Topic7,Topic1,Topic11,Topic10,Topic6
+Tutor21,Topic9,Topic2,Topic7,Topic3,Topic6,Topic12
+Tutor22,Topic9,Topic8,Topic0,Topic7,Topic13,Topic3,Topic4,Topic1,Topic12
+===
+Module0,Topic5,Topic4,Topic7,Topic3,Topic12,Topic10,Topic8,Topic2,Topic6,Topic1
+Module1,Topic1,Topic8
+Module2,Topic0,Topic11,Topic8
+Module3,Topic14,Topic8,Topic1,Topic9,Topic10,Topic3,Topic6,Topic7
+Module4,Topic5
+Module5,Topic3,Topic11,Topic8,Topic5,Topic14,Topic12,Topic10
+Module6,Topic1,Topic7,Topic0,Topic4,Topic2,Topic14
+Module7,Topic3,Topic10,Topic6,Topic8,Topic0,Topic12,Topic11,Topic9,Topic4
+Module8,Topic1,Topic11,Topic0,Topic8,Topic7,Topic10,Topic6
+Module9,Topic14,Topic2,Topic10,Topic7,Topic4,Topic5,Topic9,Topic6,Topic12
+Module10,Topic5,Topic1,Topic2,Topic7
+Module11,Topic5,Topic12,Topic6,Topic11,Topic14,Topic0,Topic9
+Module12,Topic4,Topic7,Topic1,Topic12,Topic9,Topic2,Topic8,Topic5,Topic14
+Module13,Topic9,Topic7,Topic1,Topic13,Topic14
+Module14,Topic4,Topic3,Topic7,Topic1,Topic13,Topic9,Topic10
+Module15,Topic4,Topic12,Topic8,Topic0,Topic9,Topic13,Topic1,Topic3,Topic7
+Module16,Topic9,Topic12,Topic7,Topic3,Topic6,Topic2
+Module17,Topic3
+Module18,Topic8,Topic11,Topic14,Topic13,Topic5,Topic0,Topic2
+Module19,Topic5,Topic10
+Module20,Topic2
+Module21,Topic6,Topic3,Topic10,Topic1
+Module22,Topic1,Topic9,Topic2
+Module23,Topic4,Topic7,Topic2,Topic0,Topic1,Topic9,Topic13,Topic6,Topic11,Topic12
+Module24,Topic1,Topic12,Topic3
+===
+[
+(module.Module(name="Module14", topics=["Topic4","Topic3","Topic7","Topic1","Topic13","Topic9","Topic10"]),tutor.Tutor(name="Tutor0", expertise=["Topic9","Topic7","Topic3","Topic13","Topic4","Topic1","Topic10"]), "module"),
+(module.Module(name="Module20", topics=["Topic2"]),tutor.Tutor(name="Tutor1", expertise=["Topic2"]), "module"),
+(module.Module(name="Module6", topics=["Topic1","Topic7","Topic0","Topic4","Topic2","Topic14"]),tutor.Tutor(name="Tutor2", expertise=["Topic2","Topic0","Topic7","Topic4","Topic1","Topic14"]), "module"),
+(module.Module(name="Module7", topics=["Topic3","Topic10","Topic6","Topic8","Topic0","Topic12","Topic11","Topic9","Topic4"]),tutor.Tutor(name="Tutor3", expertise=["Topic3"]), "lab"),
+(module.Module(name="Module1", topics=["Topic1","Topic8"]),tutor.Tutor(name="Tutor4", expertise=["Topic8","Topic1"]), "module"),
+(module.Module(name="Module18", topics=["Topic8","Topic11","Topic14","Topic13","Topic5","Topic0","Topic2"]),tutor.Tutor(name="Tutor3", expertise=["Topic3","Topic8"]), "lab"),
+(module.Module(name="Module22", topics=["Topic1","Topic9","Topic2"]),tutor.Tutor(name="Tutor5", expertise=["Topic1"]), "lab"),
+(module.Module(name="Module11", topics=["Topic5","Topic12","Topic6","Topic11","Topic14","Topic0","Topic9"]),tutor.Tutor(name="Tutor5", expertise=["Topic5","Topic1"]), "lab"),
+(module.Module(name="Module21", topics=["Topic6","Topic3","Topic10","Topic1"]),tutor.Tutor(name="Tutor6", expertise=["Topic3","Topic10","Topic6","Topic1"]), "module"),
+(module.Module(name="Module9", topics=["Topic14","Topic2","Topic10","Topic7","Topic4","Topic5","Topic9","Topic6","Topic12"]),tutor.Tutor(name="Tutor7", expertise=["Topic14"]), "lab"),
+(module.Module(name="Module0", topics=["Topic5","Topic4","Topic7","Topic3","Topic12","Topic10","Topic8","Topic2","Topic6","Topic1"]),tutor.Tutor(name="Tutor5", expertise=["Topic5","Topic8","Topic2","Topic7","Topic3","Topic4","Topic1","Topic10","Topic6","Topic12"]), "module"),
+(module.Module(name="Module19", topics=["Topic5","Topic10"]),tutor.Tutor(name="Tutor7", expertise=["Topic5","Topic14"]), "lab"),
+(module.Module(name="Module14", topics=["Topic4","Topic3","Topic7","Topic1","Topic13","Topic9","Topic10"]),tutor.Tutor(name="Tutor6", expertise=["Topic3","Topic4","Topic1","Topic10","Topic6"]), "lab"),
+(module.Module(name="Module9", topics=["Topic14","Topic2","Topic10","Topic7","Topic4","Topic5","Topic9","Topic6","Topic12"]),tutor.Tutor(name="Tutor1", expertise=["Topic9","Topic5","Topic2","Topic7","Topic4","Topic14","Topic10","Topic6","Topic12"]), "module"),
+(module.Module(name="Module22", topics=["Topic1","Topic9","Topic2"]),tutor.Tutor(name="Tutor4", expertise=["Topic9","Topic8","Topic2","Topic1"]), "module"),
+(module.Module(name="Module13", topics=["Topic9","Topic7","Topic1","Topic13","Topic14"]),tutor.Tutor(name="Tutor0", expertise=["Topic9","Topic7","Topic3","Topic13","Topic4","Topic1","Topic14","Topic10"]), "module"),
+(module.Module(name="Module6", topics=["Topic1","Topic7","Topic0","Topic4","Topic2","Topic14"]),tutor.Tutor(name="Tutor6", expertise=["Topic3","Topic4","Topic1","Topic10","Topic6"]), "lab"),
+(module.Module(name="Module11", topics=["Topic5","Topic12","Topic6","Topic11","Topic14","Topic0","Topic9"]),tutor.Tutor(name="Tutor3", expertise=["Topic9","Topic8","Topic5","Topic0","Topic3","Topic14","Topic11","Topic6","Topic12"]), "module"),
+(module.Module(name="Module5", topics=["Topic3","Topic11","Topic8","Topic5","Topic14","Topic12","Topic10"]),tutor.Tutor(name="Tutor2", expertise=["Topic2","Topic0","Topic7","Topic3","Topic4","Topic1","Topic14"]), "lab"),
+(module.Module(name="Module2", topics=["Topic0","Topic11","Topic8"]),tutor.Tutor(name="Tutor7", expertise=["Topic5","Topic14","Topic0"]), "lab"),
+(module.Module(name="Module17", topics=["Topic3"]),tutor.Tutor(name="Tutor2", expertise=["Topic2","Topic0","Topic7","Topic3","Topic4","Topic1","Topic14"]), "lab"),
+(module.Module(name="Module4", topics=["Topic5"]),tutor.Tutor(name="Tutor7", expertise=["Topic5","Topic14","Topic0"]), "lab"),
+(module.Module(name="Module19", topics=["Topic5","Topic10"]),tutor.Tutor(name="Tutor8", expertise=["Topic10","Topic5"]), "module"),
+(module.Module(name="Module21", topics=["Topic6","Topic3","Topic10","Topic1"]),tutor.Tutor(name="Tutor9", expertise=["Topic6"]), "lab"),
+(module.Module(name="Module2", topics=["Topic0","Topic11","Topic8"]),tutor.Tutor(name="Tutor10", expertise=["Topic0","Topic11","Topic8"]), "module"),
+(module.Module(name="Module3", topics=["Topic14","Topic8","Topic1","Topic9","Topic10","Topic3","Topic6","Topic7"]),tutor.Tutor(name="Tutor11", expertise=["Topic9","Topic8","Topic7","Topic3","Topic14","Topic1","Topic10","Topic6"]), "module"),
+(module.Module(name="Module24", topics=["Topic1","Topic12","Topic3"]),tutor.Tutor(name="Tutor9", expertise=["Topic6","Topic1"]), "lab"),
+(module.Module(name="Module10", topics=["Topic5","Topic1","Topic2","Topic7"]),tutor.Tutor(name="Tutor12", expertise=["Topic5","Topic2","Topic1","Topic7"]), "module"),
+(module.Module(name="Module3", topics=["Topic14","Topic8","Topic1","Topic9","Topic10","Topic3","Topic6","Topic7"]),tutor.Tutor(name="Tutor13", expertise=["Topic14"]), "lab"),
+(module.Module(name="Module17", topics=["Topic3"]),tutor.Tutor(name="Tutor14", expertise=["Topic3"]), "module"),
+(module.Module(name="Module23", topics=["Topic4","Topic7","Topic2","Topic0","Topic1","Topic9","Topic13","Topic6","Topic11","Topic12"]),tutor.Tutor(name="Tutor14", expertise=["Topic9","Topic2","Topic0","Topic7","Topic3","Topic13","Topic4","Topic1","Topic11","Topic6","Topic12"]), "module"),
+(module.Module(name="Module13", topics=["Topic9","Topic7","Topic1","Topic13","Topic14"]),tutor.Tutor(name="Tutor9", expertise=["Topic9","Topic6","Topic1"]), "lab"),
+(module.Module(name="Module24", topics=["Topic1","Topic12","Topic3"]),tutor.Tutor(name="Tutor11", expertise=["Topic9","Topic8","Topic7","Topic3","Topic14","Topic1","Topic10","Topic6","Topic12"]), "module"),
+(module.Module(name="Module15", topics=["Topic4","Topic12","Topic8","Topic0","Topic9","Topic13","Topic1","Topic3","Topic7"]),tutor.Tutor(name="Tutor10", expertise=["Topic4","Topic0","Topic11","Topic8"]), "lab"),
+(module.Module(name="Module18", topics=["Topic8","Topic11","Topic14","Topic13","Topic5","Topic0","Topic2"]),tutor.Tutor(name="Tutor12", expertise=["Topic5","Topic2","Topic8","Topic0","Topic7","Topic13","Topic1","Topic14","Topic11"]), "module"),
+(module.Module(name="Module20", topics=["Topic2"]),tutor.Tutor(name="Tutor13", expertise=["Topic2","Topic14"]), "lab"),
+(module.Module(name="Module1", topics=["Topic1","Topic8"]),tutor.Tutor(name="Tutor13", expertise=["Topic2","Topic14","Topic1"]), "lab"),
+(module.Module(name="Module8", topics=["Topic1","Topic11","Topic0","Topic8","Topic7","Topic10","Topic6"]),tutor.Tutor(name="Tutor8", expertise=["Topic10","Topic5","Topic1"]), "lab"),
+(module.Module(name="Module16", topics=["Topic9","Topic12","Topic7","Topic3","Topic6","Topic2"]),tutor.Tutor(name="Tutor9", expertise=["Topic9","Topic6","Topic1"]), "lab"),
+(module.Module(name="Module23", topics=["Topic4","Topic7","Topic2","Topic0","Topic1","Topic9","Topic13","Topic6","Topic11","Topic12"]),tutor.Tutor(name="Tutor8", expertise=["Topic10","Topic5","Topic1","Topic4"]), "lab"),
+(module.Module(name="Module0", topics=["Topic5","Topic4","Topic7","Topic3","Topic12","Topic10","Topic8","Topic2","Topic6","Topic1"]),tutor.Tutor(name="Tutor10", expertise=["Topic5","Topic8","Topic0","Topic4","Topic11"]), "lab"),
+(module.Module(name="Module12", topics=["Topic4","Topic7","Topic1","Topic12","Topic9","Topic2","Topic8","Topic5","Topic14"]),tutor.Tutor(name="Tutor13", expertise=["Topic4","Topic2","Topic14","Topic1"]), "lab"),
+(module.Module(name="Module5", topics=["Topic3","Topic11","Topic8","Topic5","Topic14","Topic12","Topic10"]),tutor.Tutor(name="Tutor15", expertise=["Topic8","Topic5","Topic3","Topic14","Topic11","Topic10","Topic12"]), "module"),
+(module.Module(name="Module4", topics=["Topic5"]),tutor.Tutor(name="Tutor16", expertise=["Topic5"]), "module"),
+(module.Module(name="Module7", topics=["Topic3","Topic10","Topic6","Topic8","Topic0","Topic12","Topic11","Topic9","Topic4"]),tutor.Tutor(name="Tutor17", expertise=["Topic9","Topic8","Topic0","Topic3","Topic4","Topic11","Topic10","Topic6","Topic12"]), "module"),
+(module.Module(name="Module10", topics=["Topic5","Topic1","Topic2","Topic7"]),tutor.Tutor(name="Tutor18", expertise=["Topic5"]), "lab"),
+(module.Module(name="Module12", topics=["Topic4","Topic7","Topic1","Topic12","Topic9","Topic2","Topic8","Topic5","Topic14"]),tutor.Tutor(name="Tutor19", expertise=["Topic9","Topic8","Topic2","Topic5","Topic7","Topic4","Topic1","Topic14","Topic12"]), "module"),
+(module.Module(name="Module8", topics=["Topic1","Topic11","Topic0","Topic8","Topic7","Topic10","Topic6"]),tutor.Tutor(name="Tutor20", expertise=["Topic8","Topic0","Topic7","Topic1","Topic11","Topic10","Topic6"]), "module"),
+(module.Module(name="Module16", topics=["Topic9","Topic12","Topic7","Topic3","Topic6","Topic2"]),tutor.Tutor(name="Tutor21", expertise=["Topic9","Topic2","Topic7","Topic3","Topic6","Topic12"]), "module"),
+(module.Module(name="Module15", topics=["Topic4","Topic12","Topic8","Topic0","Topic9","Topic13","Topic1","Topic3","Topic7"]),tutor.Tutor(name="Tutor22", expertise=["Topic9","Topic8","Topic0","Topic7","Topic13","Topic3","Topic4","Topic1","Topic12"]), "module"),
+]
