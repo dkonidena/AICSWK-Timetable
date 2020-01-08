@@ -18,7 +18,9 @@ import time
 #Overall, the only changes that need to be made to this file is commenting and uncommenting the correct method call
 #based on which problem you are trying to solve, and changing which problem is loaded in. 
 path = "cs255-examples-master/"
+count = 0
 def task3():
+	global count
 	x = [d for d in os.listdir(path)]
 	for problem in x:
 		if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
@@ -40,6 +42,8 @@ def task3():
 			# print(str(tt.schedule))
 			if tt.scheduleChecker(tutorList, moduleList):
 				print("Schedule is legal. TASK 3")
+				if tt.cost >= 11000:
+					count+=1
 				print("Schedule has a cost of " + str(tt.cost))
 				print("\n\n")
 			else:
@@ -103,12 +107,13 @@ def task1():
 				print(problem)
 				break
 start = time.time()
-task1()
+# task1()
 print("\n\nTask 1 passed")
-task2()
+# task2()
 print("\n\nTask 2 passed")
 task3()
 print("\n\nTask 3 passed")
 end = time.time()
 print("\n\nTIME FOR ALL TASKS = ",end-start)
+print("\n Count of costs less than 11K =", count)
 print("\n\nALL TESTS PASSED")
