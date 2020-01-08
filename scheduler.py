@@ -101,12 +101,12 @@ class Scheduler:
 		maxDays = -1
 		for module in minModule:
 			for tutor in minModule[module]:
-				if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] > 0:
+				if len(tutorDomain[tutor][0]) > maxDays and tutorDomain[tutor][1] - 1 >= 0:
 					selected.clear()
 					selected[module] = []
 					selected[module].append(tutor)
 					maxDays = len(tutorDomain[tutor][0])
-				elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] > 0:
+				elif len(tutorDomain[tutor][0]) == maxDays and tutorDomain[tutor][1] - 1 >= 0:
 					if module in selected:
 						selected[module].append(tutor)
 					else:
@@ -559,6 +559,82 @@ class Scheduler:
 		else:
 			tree.remove()
 			return True
+	def backtrackMinCost(self, moduleDomain, tutorDomain, slotDomain, tree, minCost):
+		# print("deleting", tree.leaf.possible[0])
+		index = tree.leaf.index
+		del tree.leaf.possible[index]
+		sessionType = tree.leaf.assignment[4]
+		if sessionType == "module":
+			if tree.leaf.assignment[0] in moduleDomain:
+				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
+			else :
+				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
+				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
+			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
+			else :
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2
+			tutorDomain[tree.leaf.assignment[1]][1] +=2
+			# tutorDomain[tree.leaf.assignment[1]][3] -=1
+			# tutorDomain[tree.leaf.assignment[1]][2][tree.leaf.assignment[2]] +=3
+		if sessionType == "lab":
+			if tree.leaf.assignment[0] in moduleDomain:
+				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
+			else :
+				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
+				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
+			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
+			else :
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
+			tutorDomain[tree.leaf.assignment[1]][1] +=1
+			tutorDomain[tree.leaf.assignment[1]][4] -=1
+			tutorDomain[tree.leaf.assignment[1]][2][tree.leaf.assignment[2]] +=1
+		if tree.leaf.assignment[2] in slotDomain:
+			slotDomain[tree.leaf.assignment[2]] +=1
+		else:
+			slotDomain[tree.leaf.assignment[2]] = 1
+		
+		if (tree.leaf.possible):
+			newIndex = self.searchPossible(tree.leaf.possible, minCost, tutorDomain)
+			session = tree.leaf.possible[newIndex][1][1]
+			tree.leaf.assignment[0] = tree.leaf.possible[newIndex][0]
+			tree.leaf.assignment[1] = tree.leaf.possible[newIndex][1][0]
+			tree.leaf.assignment[2] = tree.leaf.possible[newIndex][2]
+			tree.leaf.assignment[3] = slotDomain[tree.leaf.possible[newIndex][2]]
+			tree.leaf.assignment[4] = session
+			tree.leaf.index = newIndex
+			if session == "module":
+				moduleDomain[tree.leaf.possible[newIndex][0]][0] = []
+				if len(moduleDomain[tree.leaf.possible[newIndex][0]][1]) == 0:
+					del moduleDomain[tree.leaf.possible[newIndex][0]]
+				slotDomain[tree.leaf.possible[newIndex][2]] -= 1
+				if(slotDomain[tree.leaf.possible[newIndex][2]] == 0):
+					del slotDomain[tree.leaf.possible[newIndex][2]]
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] -=2
+				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
+					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=2
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][3] +=1
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][2][tree.leaf.possible[newIndex][2]] -=3
+			if session == "lab":
+				moduleDomain[tree.leaf.possible[newIndex][0]][1] = []
+				if len(moduleDomain[tree.leaf.possible[newIndex][0]][0]) == 0:
+					del moduleDomain[tree.leaf.possible[newIndex][0]]
+				slotDomain[tree.leaf.possible[newIndex][2]] -= 1
+				if(slotDomain[tree.leaf.possible[newIndex][2]] == 0):
+					del slotDomain[tree.leaf.possible[newIndex][2]]
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] -=1
+				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
+					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=1
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][4] +=1
+				tutorDomain[tree.leaf.possible[newIndex][1][0]][2][tree.leaf.possible[newIndex][2]] -=1
+				
+			return False
+		else:
+			tree.remove()
+			return True
 
 	#Now, we have introduced lab sessions. Each day now has ten sessions, and there is a lab session as well as a module session.
 	#All module and lab sessions must be assigned to a slot, and each module and lab session require a tutor.
@@ -790,7 +866,7 @@ class Scheduler:
 					backtracking = True
 			else:
 				back+=1
-				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree, True)
+				backtracking = self.backtrackMinCost(moduleDomain, tutorDomain, slotDomain, tree, True)
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
