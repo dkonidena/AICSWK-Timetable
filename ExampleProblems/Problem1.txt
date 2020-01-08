@@ -1,16 +1,23 @@
 Matte,Data Science,Complexity,Image Analysis,Distributed Systems,Artifical Intelligence,Networks
-Baughman,Networks,Urban Science,Databases,Data Science,Distributed Systems,Artifical Intelligence
-Bybee,Networks,Robotics,Complexity,Databases
-Bolles,Image Analysis,Data Science,Robotics,Architecture,Distributed Systems,Mathematics
-Hilbert,Robotics,Security,Networks,Artifical Intelligence,Architecture,Mathematics
-Almy,Security,Image Analysis,Artifical Intelligence,Mathematics,Complexity,Distributed Systems
-Loveless,Complexity,Urban Science,Mathematics,Artifical Intelligence,Robotics,Architecture
-Heyward,Image Analysis,Urban Science,Architecture,Databases,Data Science
 Threlkeld,Robotics,Security,Urban Science,Architecture
-Roush,Distributed Systems,Urban Science,Image Analysis,Networks,Artifical Intelligence,Architecture
-Stage,Mathematics,Robotics,Image Analysis,Distributed Systems,Databases
+Hilbert,Robotics,Security,Networks,Artifical Intelligence,Architecture,Mathematics
+Barling,Architecture,Image Analysis,Mathematics
 Robins,Complexity,Mathematics,Distributed Systems,Architecture,Databases
-Castor,Urban Science,Architecture,Robotics,Algorithms
+Roush,Distributed Systems,Urban Science,Image Analysis,Networks,Artifical Intelligence,Architecture
+Reardon,Distributed Systems,Artifical Intelligence,Networks
+Bybee,Networks,Robotics,Complexity,Databases
+Stage,Mathematics,Robotics,Image Analysis,Distributed Systems
+Creek,Databases,Mathematics,Robotics
+Loveless,Complexity,Urban Science,Mathematics,Artifical Intelligence,Robotics
+Bolles,Image Analysis,Data Science,Robotics,Architecture,Distributed Systems,Mathematics
+Almy,Security,Image Analysis,Artifical Intelligence,Mathematics,Complexity
+Baughman,Networks,Urban Science,Databases,Data Science,Distributed Systems,Artifical Intelligence
+Chouinard,Mathematics,Artifical Intelligence,Distributed Systems
+Phillip,Data Science,Complexity,Robotics,Databases,Security
+Heyward,Image Analysis,Urban Science,Architecture,Databases,Data Science
+Castor,Urban Science,Architecture,Robotics
+Berge,Urban Science,Architecture,Data Science
+Coco,Algorithms,Robotics,Databases
 ===
 CS446,Mathematics,Urban Science
 CS430,Image Analysis,Urban Science
