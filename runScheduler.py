@@ -1,4 +1,5 @@
 import module
+import math
 import tutor
 import ReaderWriter
 import timetable
@@ -19,8 +20,10 @@ import time
 #based on which problem you are trying to solve, and changing which problem is loaded in. 
 path = "cs255-examples-master/"
 count = 0
+cost = 0
 def task3():
 	global count
+	global cost
 	x = [d for d in os.listdir(path)]
 	for problem in x:
 		if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
@@ -42,14 +45,14 @@ def task3():
 			# print(str(tt.schedule))
 			if tt.scheduleChecker(tutorList, moduleList):
 				print("Schedule is legal. TASK 3")
-				if tt.cost >= 11000:
-					count+=1
+				count+=1
+				cost+=tt.cost
 				print("Schedule has a cost of " + str(tt.cost))
 				print("\n\n")
 			else:
 				print("PROBLEM")
 				print(problem)
-				break
+				exit()
 def task2():
 	x = [d for d in os.listdir(path)]
 	for problem in x:
@@ -77,7 +80,7 @@ def task2():
 			else:
 				print("PROBLEM")
 				print(problem)
-				break
+				exit()
 def task1():
 	x = [d for d in os.listdir(path)]
 	for problem in x:
@@ -105,15 +108,20 @@ def task1():
 			else:
 				print("PROBLEM")
 				print(problem)
-				break
+				exit()
 start = time.time()
 # task1()
-print("\n\nTask 1 passed")
+# print("\n\nTask 1 passed")
 # task2()
-print("\n\nTask 2 passed")
-task3()
-print("\n\nTask 3 passed")
-end = time.time()
-print("\n\nTIME FOR ALL TASKS = ",end-start)
-print("\n Count of costs less than 11K =", count)
-print("\n\nALL TESTS PASSED")
+# print("\n\nTask 2 passed")
+costs = []
+for i in range(1000):
+	task3()
+	print("\n\nTask 3 passed")
+	end = time.time()
+	print("\n\nTIME FOR ALL TASKS = ",end-start)
+	avg = math.ceil(cost/count)
+	costs.append(avg)
+	print("\n AVERAGE COST ", math.ceil(cost/count))
+	print("\n\nALL TESTS PASSED")
+print("\nAVERAGE ", sum(costs)/len(costs) )
