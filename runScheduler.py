@@ -20,7 +20,7 @@ import os
 path = "cs255-examples-master/"
 x = [d for d in os.listdir(path)]
 for problem in x:
-	if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges" and problem != "Problem1.txt":
+	if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
 
 		print(problem)
 		rw = ReaderWriter.ReaderWriter()
@@ -28,13 +28,13 @@ for problem in x:
 		sch = scheduler.Scheduler(tutorList, moduleList)
 
 		#this method will be used to create a schedule that solves task 1
-		tt = sch.createSchedule()
+		# tt = sch.createSchedule()
 
 		#This method will be used to create a schedule that solves task 2
 		# tt = sch.createLabSchedule()
 
 		#this method will be used to create a schedule that solves task 3
-		# tt = sch.createMinCostSchedule()
+		tt = sch.createMinCostSchedule()
 
 		# print(str(tt.schedule))
 		if tt.scheduleChecker(tutorList, moduleList):
