@@ -4,7 +4,7 @@ import ReaderWriter
 import timetable
 import scheduler
 import os
-
+import time
 #This file allows you to test your schedulers. tt.scheduleChecker will return false if your schedule is not legal.
 #It will also print a message displaying the constraint being violated by the schedule. 
 
@@ -17,34 +17,98 @@ import os
 
 #Overall, the only changes that need to be made to this file is commenting and uncommenting the correct method call
 #based on which problem you are trying to solve, and changing which problem is loaded in. 
-path = "cs255-examples-master/"
-x = [d for d in os.listdir(path)]
-for problem in x:
-	if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
+path = "hard/"
+def task3():
+	x = [d for d in os.listdir(path)]
+	for problem in x:
+		if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
 
-		print(problem)
-		rw = ReaderWriter.ReaderWriter()
-		[tutorList, moduleList] = rw.readRequirements(path+problem)
-		sch = scheduler.Scheduler(tutorList, moduleList)
-
-		#this method will be used to create a schedule that solves task 1
-		# tt = sch.createSchedule()
-
-		#This method will be used to create a schedule that solves task 2
-		# tt = sch.createLabSchedule()
-
-		#this method will be used to create a schedule that solves task 3
-		tt = sch.createMinCostSchedule()
-
-		# print(str(tt.schedule))
-		if tt.scheduleChecker(tutorList, moduleList):
-			print("Schedule is legal.")
-			print("Schedule has a cost of " + str(tt.cost))
-			print("\n\n")
-		else:
-			print("PROBLEM")
 			print(problem)
-			break
+			rw = ReaderWriter.ReaderWriter()
+			[tutorList, moduleList] = rw.readRequirements(path+problem)
+			sch = scheduler.Scheduler(tutorList, moduleList)
 
+			#this method will be used to create a schedule that solves task 1
+			# tt = sch.createSchedule()
 
-	# print(str(tt.schedule))
+			#This method will be used to create a schedule that solves task 2
+			# tt = sch.createLabSchedule()
+
+			#this method will be used to create a schedule that solves task 3
+			tt = sch.createMinCostSchedule()
+
+			# print(str(tt.schedule))
+			if tt.scheduleChecker(tutorList, moduleList):
+				print("Schedule is legal. TASK 3")
+				print("Schedule has a cost of " + str(tt.cost))
+				print("\n\n")
+			else:
+				print("PROBLEM")
+				print(problem)
+				break
+def task2():
+	x = [d for d in os.listdir(path)]
+	for problem in x:
+		if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
+
+			print(problem)
+			rw = ReaderWriter.ReaderWriter()
+			[tutorList, moduleList] = rw.readRequirements(path+problem)
+			sch = scheduler.Scheduler(tutorList, moduleList)
+
+			#this method will be used to create a schedule that solves task 1
+			# tt = sch.createSchedule()
+
+			#This method will be used to create a schedule that solves task 2
+			tt = sch.createLabSchedule()
+
+			#this method will be used to create a schedule that solves task 3
+			# tt = sch.createMinCostSchedule()
+
+			# print(str(tt.schedule))
+			if tt.scheduleChecker(tutorList, moduleList):
+				print("Schedule is legal. TASK 2")
+				print("Schedule has a cost of " + str(tt.cost))
+				print("\n\n")
+			else:
+				print("PROBLEM")
+				print(problem)
+				break
+def task1():
+	x = [d for d in os.listdir(path)]
+	for problem in x:
+		if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
+
+			print(problem)
+			rw = ReaderWriter.ReaderWriter()
+			[tutorList, moduleList] = rw.readRequirements(path+problem)
+			sch = scheduler.Scheduler(tutorList, moduleList)
+
+			#this method will be used to create a schedule that solves task 1
+			tt = sch.createSchedule()
+
+			#This method will be used to create a schedule that solves task 2
+			# tt = sch.createLabSchedule()
+
+			#this method will be used to create a schedule that solves task 3
+			# tt = sch.createMinCostSchedule()
+
+			# print(str(tt.schedule))
+			if tt.scheduleChecker(tutorList, moduleList):
+				print("Schedule is legal. - TASK 1")
+				print("Schedule has a cost of " + str(tt.cost))
+				print("\n\n")
+			else:
+				print("PROBLEM")
+				print(problem)
+				break
+start = time.time()
+task1()
+print("\n\nTask 1 passed")
+task2()
+print("\n\nTask 2 passed")
+task3()
+print("\n\nTask 3 passed")
+end = time.time()
+print("\n\nTIME FOR ALL TASKS = ",end-start)
+print("\n\nALL TESTS PASSED")
