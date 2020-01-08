@@ -703,10 +703,10 @@ class Scheduler:
 					elif labIndices:
 						return labIndices[0]
 				else:
-					if moduleIndices:
-						return moduleIndices[0]
-					elif labIndices:
+					if labIndices:
 						return labIndices[0]
+					elif moduleIndices:
+						return moduleIndices[0]
 			else:
 				return 0
 		else:
