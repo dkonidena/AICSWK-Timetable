@@ -110,12 +110,13 @@ def task1():
 				print(problem)
 				exit()
 start = time.time()
-# task1()
+task1()
 # print("\n\nTask 1 passed")
-# task2()
+task2()
 # print("\n\nTask 2 passed")
+# task3()
 costs = []
-for i in range(1000):
+for i in range(1):
 	task3()
 	print("\n\nTask 3 passed")
 	end = time.time()
