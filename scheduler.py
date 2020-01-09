@@ -88,10 +88,10 @@ class Scheduler:
 		# print("MODULE DOMAIN ", moduleDomain)
 		# choosing the module with the least tutors available
 		for module in moduleDomain:
-			if len(moduleDomain[module]) < minTutors:
+			if self.moduleLength(tutorDomain, moduleDomain[module]) < minTutors:
 				minModule.clear()
 				minModule[module] = moduleDomain[module]
-				minTutors = len(moduleDomain[module])
+				minTutors = self.moduleLength(tutorDomain, moduleDomain[module]) 
 			elif len(moduleDomain[module]) == minTutors:
 				minModule[module] = moduleDomain[module]
 		# from the modules chosen along with the tutors, choosing the tutor with the max available days
@@ -272,6 +272,10 @@ class Scheduler:
 		del tree.leaf.possible[0]
 		moduleDomain[tree.leaf.assignment[0]] = self.eligibleTutors(tree.leaf.assignment[0], True)
 		tutorDomain[tree.leaf.assignment[1]][0].append(tree.leaf.assignment[2])
+		if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+			for module in moduleDomain:
+				if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+					moduleDomain[module].append(tree.leaf.assignment[1]) 
 		tutorDomain[tree.leaf.assignment[1]][1] +=1
 		if tree.leaf.assignment[2] in slotDomain:
 			slotDomain[tree.leaf.assignment[2]] +=1
@@ -289,6 +293,10 @@ class Scheduler:
 				del slotDomain[tree.leaf.possible[0][2]]
 			tutorDomain[tree.leaf.possible[0][1]][0].remove(tree.leaf.possible[0][2])
 			tutorDomain[tree.leaf.possible[0][1]][1] -=1
+			if tutorDomain[tree.leaf.possible[0][1]][1] == 0:
+				for module in moduleDomain:
+					if tree.leaf.possible[0][1] in moduleDomain[module]:
+						moduleDomain[module].remove(tree.leaf.possible[0][1])
 			return False
 		else:
 			tree.remove()
@@ -340,6 +348,12 @@ class Scheduler:
 		print("TIME ELAPSED ", end-start)
 		#Do not change this line
 		return timetableObj
+	def moduleLength(self, tutorDomain, tutorList):
+		c = 0
+		for tutor in tutorList:
+			if tutorDomain[tutor][1] != 0:
+				c+=1
+		return c
 
 	def moduleLabChoose(self, moduleDomain, tutorDomain, slotDomain):
 		minTutors = math.inf
@@ -348,15 +362,15 @@ class Scheduler:
 		for module in moduleDomain:
 			i = 0
 			while(i<len(moduleDomain[module])):
-				if len(moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+				if self.moduleLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
 					minModule.clear()
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
-						minTutors = len(moduleDomain[module][i])
+						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
 					elif i == 1:
 						minModule[module] = (moduleDomain[module][i], "lab")
-						minTutors = len(moduleDomain[module][i])
-				elif len(moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
+				elif self.moduleLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
 					elif i == 1:
@@ -415,15 +429,15 @@ class Scheduler:
 		for module in moduleDomain:
 			i = 0
 			while(i<len(moduleDomain[module])):
-				if len(moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+				if self.moduleLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
 					minModule.clear()
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
-						minTutors = len(moduleDomain[module][i])
+						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
 					elif i == 1:
 						minModule[module] = (moduleDomain[module][i], "lab")
-						minTutors = len(moduleDomain[module][i])
-				elif len(moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
+				elif self.moduleLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
 					elif i == 1:
@@ -507,6 +521,12 @@ class Scheduler:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2
+			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+				for module in moduleDomain:
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
+						moduleDomain[module][1].append(tree.leaf.assignment[1])
 			tutorDomain[tree.leaf.assignment[1]][1] +=2
 		if sessionType == "lab":
 			if tree.leaf.assignment[0] in moduleDomain:
@@ -518,6 +538,13 @@ class Scheduler:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
+			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+				for module in moduleDomain:
+					if tutorDomain[tree.leaf.assignment[1]][1] + 1 >= 2:
+						if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+							moduleDomain[module][0].append(tree.leaf.assignment[1]) 
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
+						moduleDomain[module][1].append(tree.leaf.assignment[1])
 			tutorDomain[tree.leaf.assignment[1]][1] +=1
 		if tree.leaf.assignment[2] in slotDomain:
 			slotDomain[tree.leaf.assignment[2]] +=1
@@ -555,6 +582,12 @@ class Scheduler:
 				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
 					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=1
+				if tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 0:
+					for module in moduleDomain:
+						if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
+							moduleDomain[module][0].remove(tree.leaf.possible[newIndex][1][0]) 
+						if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][1]:
+							moduleDomain[module][1].remove(tree.leaf.possible[newIndex][1][0])
 			return False
 		else:
 			tree.remove()
@@ -574,9 +607,15 @@ class Scheduler:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2
+			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+				for module in moduleDomain:
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
+						moduleDomain[module][1].append(tree.leaf.assignment[1])
 			tutorDomain[tree.leaf.assignment[1]][1] +=2
-			# tutorDomain[tree.leaf.assignment[1]][3] -=1
-			# tutorDomain[tree.leaf.assignment[1]][2][tree.leaf.assignment[2]] +=3
+			tutorDomain[tree.leaf.assignment[1]][3] -=1
+			tutorDomain[tree.leaf.assignment[1]][2][tree.leaf.assignment[2]] +=3
 		if sessionType == "lab":
 			if tree.leaf.assignment[0] in moduleDomain:
 				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
@@ -587,6 +626,13 @@ class Scheduler:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
+			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+				for module in moduleDomain:
+					if tutorDomain[tree.leaf.assignment[1]][1] + 1 >= 2:
+						if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+							moduleDomain[module][0].append(tree.leaf.assignment[1]) 
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
+						moduleDomain[module][1].append(tree.leaf.assignment[1])
 			tutorDomain[tree.leaf.assignment[1]][1] +=1
 			tutorDomain[tree.leaf.assignment[1]][4] -=1
 			tutorDomain[tree.leaf.assignment[1]][2][tree.leaf.assignment[2]] +=1
@@ -630,6 +676,12 @@ class Scheduler:
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=1
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][4] +=1
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][2][tree.leaf.possible[newIndex][2]] -=1
+			if tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 0:
+				for module in moduleDomain:
+					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
+						moduleDomain[module][0].remove(tree.leaf.possible[newIndex][1][0]) 
+					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][1]:
+						moduleDomain[module][1].remove(tree.leaf.possible[newIndex][1][0])
 				
 			return False
 		else:
@@ -786,7 +838,7 @@ class Scheduler:
 			else:
 				return 0
 		else:
-			return math.floor(len(possible)/2)
+			return 0
 
 	#It costs £500 to hire a tutor for a single module.
 	#If we hire a tutor to teach a 2nd module, it only costs £300. (meaning 2 modules cost £800 compared to £1000)
