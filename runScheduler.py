@@ -21,9 +21,15 @@ import time
 path = "cs255-examples-master/"
 count = 0
 cost = 0
+low = 0
+least = 0
 def task3():
-	global count
+	global count 
 	global cost
+	global low
+	global least
+	low = 0
+	least = 0
 	x = [d for d in os.listdir(path)]
 	for problem in x:
 		if problem != ".DS_Store"  and problem != "LICENSE" and problem != "README.md" and problem != "edges":
@@ -45,6 +51,11 @@ def task3():
 			# print(str(tt.schedule))
 			if tt.scheduleChecker(tutorList, moduleList):
 				print("Schedule is legal. TASK 3")
+				if tt.cost == 10050:
+					least+=1
+				if tt.cost < 11000:
+					low+=1
+
 				count+=1
 				cost+=tt.cost
 				print("Schedule has a cost of " + str(tt.cost))
@@ -111,18 +122,24 @@ def task1():
 				exit()
 start = time.time()
 task1()
-# print("\n\nTask 1 passed")
+print("\n\nTask 1 passed")
 task2()
-# print("\n\nTask 2 passed")
+print("\n\nTask 2 passed")
 # task3()
-costs = []
-for i in range(1):
-	task3()
-	print("\n\nTask 3 passed")
-	end = time.time()
-	print("\n\nTIME FOR ALL TASKS = ",end-start)
-	avg = math.ceil(cost/count)
-	costs.append(avg)
-	print("\n AVERAGE COST ", math.ceil(cost/count))
-	print("\n\nALL TESTS PASSED")
-print("\nAVERAGE ", sum(costs)/len(costs) )
+# costs = []
+# lows = []
+# leasts = []
+# for i in range(3):
+# 	task3()
+# 	print("\n\nTask 3 passed")
+# 	end = time.time()
+# 	print("\n\nTIME FOR ALL TASKS = ",end-start)
+# 	avg = math.ceil(cost/count)
+# 	costs.append(avg)
+# 	lows.append(low)
+# 	leasts.append(least)
+# 	print("\n AVERAGE COST ", math.ceil(cost/count))
+# 	print("\n\nALL TESTS PASSED")
+# print("\nAVERAGE ", sum(costs)/len(costs) )
+# print("LESS THAN 11K ", lows)
+# print("LEAST 10050 - ", leasts)
