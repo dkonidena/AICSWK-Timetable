@@ -1,0 +1,39 @@
+Matte,Data Science,Complexity,Image Analysis,Distributed Systems,Artifical Intelligence,Networks
+Baughman,Networks,Urban Science,Databases,Data Science,Distributed Systems,Artifical Intelligence
+Bybee,Networks,Robotics,Complexity,Databases
+Bolles,Image Analysis,Data Science,Robotics,Architecture,Distributed Systems,Mathematics
+Hilbert,Robotics,Security,Networks,Artifical Intelligence,Architecture,Mathematics
+Almy,Security,Image Analysis,Artifical Intelligence,Mathematics,Complexity,Distributed Systems
+Loveless,Complexity,Urban Science,Mathematics,Artifical Intelligence,Robotics,Architecture
+Heyward,Image Analysis,Urban Science,Architecture,Databases,Data Science
+Threlkeld,Robotics,Security,Urban Science,Architecture
+Roush,Distributed Systems,Urban Science,Image Analysis,Networks,Artifical Intelligence,Architecture
+Stage,Mathematics,Robotics,Image Analysis,Distributed Systems,Databases
+Robins,Complexity,Mathematics,Distributed Systems,Architecture,Databases
+Castor,Urban Science,Architecture,Robotics,Algorithms
+===
+CS446,Mathematics,Urban Science
+CS430,Image Analysis,Urban Science
+CS170,Robotics,Databases
+CS411,Data Science,Urban Science
+CS113,Artifical Intelligence,Mathematics
+CS211,Data Science,Robotics
+CS399,Architecture,Urban Science
+CS329,Urban Science,Robotics
+CS117,Databases,Networks
+CS326,Robotics,Image Analysis
+CS198,Image Analysis,Architecture
+CS195,Architecture,Robotics
+CS200,Mathematics,Architecture
+CS472,Complexity,Mathematics
+CS382,Distributed Systems,Mathematics
+CS162,Urban Science,Networks
+CS304,Data Science,Image Analysis
+CS327,Complexity,Robotics
+CS103,Distributed Systems,Urban Science
+CS217,Complexity,Image Analysis
+CS487,Mathematics,Robotics
+CS413,Robotics,Security
+CS392,Networks,Complexity
+CS338,Robotics,Algorithms
+CS343,Security,Networks
