@@ -538,11 +538,12 @@ class Scheduler:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
-			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
 				for module in moduleDomain:
-					if tutorDomain[tree.leaf.assignment[1]][1] + 1 >= 2:
-						if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
-							moduleDomain[module][0].append(tree.leaf.assignment[1]) 
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+						moduleDomain[module][1].append(tree.leaf.assignment[1])
+			elif tutorDomain[tree.leaf.assignment[1]][1] == 0:
+				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
 			tutorDomain[tree.leaf.assignment[1]][1] +=1
@@ -582,12 +583,16 @@ class Scheduler:
 				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
 					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=1
-				if tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 0:
-					for module in moduleDomain:
-						if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
-							moduleDomain[module][0].remove(tree.leaf.possible[newIndex][1][0]) 
-						if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][1]:
-							moduleDomain[module][1].remove(tree.leaf.possible[newIndex][1][0])
+			if tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 1:
+				for module in moduleDomain:
+					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
+						moduleDomain[module][0].remove(tree.leaf.possible[newIndex][1][0]) 
+			elif tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 0:
+				for module in moduleDomain:
+					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
+						moduleDomain[module][0].remove(tree.leaf.possible[newIndex][1][0]) 
+					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][1]:
+						moduleDomain[module][1].remove(tree.leaf.possible[newIndex][1][0])
 			return False
 		else:
 			tree.remove()
@@ -606,12 +611,8 @@ class Scheduler:
 			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
 			else :
-				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2
-			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
-				for module in moduleDomain:
-					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
-						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
-			elif tutorDomain[tree.leaf.assignment[1]][1] == 0:
+				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2 
+			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
@@ -634,7 +635,7 @@ class Scheduler:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 						moduleDomain[module][0].append(tree.leaf.assignment[1])
-			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+			elif tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
@@ -685,7 +686,7 @@ class Scheduler:
 				for module in moduleDomain:
 					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
 						moduleDomain[module][0].remove(tree.leaf.possible[newIndex][1][0]) 
-			if tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 0:
+			elif tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 0:
 				for module in moduleDomain:
 					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
 						moduleDomain[module][0].remove(tree.leaf.possible[newIndex][1][0]) 
@@ -755,7 +756,11 @@ class Scheduler:
 						if tutorDomain[x[index][1][0]][0][x[index][2]] == 0:
 							del tutorDomain[x[index][1][0]][0][x[index][2]]
 						tutorDomain[x[index][1][0]][1] -=1
-					if tutorDomain[x[index][1][0]][1] == 0:
+					if tutorDomain[x[index][1][0]][1] == 1:
+						for module in moduleDomain:
+							if x[index][1][0] in moduleDomain[module][0]:
+								moduleDomain[module][0].remove(x[index][1][0]) 
+					elif tutorDomain[x[index][1][0]][1] == 0:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
 								moduleDomain[module][0].remove(x[index][1][0]) 
@@ -921,7 +926,7 @@ class Scheduler:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
 								moduleDomain[module][0].remove(x[index][1][0]) 
-					if tutorDomain[x[index][1][0]][1] == 0:
+					elif tutorDomain[x[index][1][0]][1] == 0:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
 								moduleDomain[module][0].remove(x[index][1][0]) 
