@@ -125,11 +125,11 @@ task1()
 print("\n\nTask 1 passed")
 task2()
 print("\n\nTask 2 passed")
-task3()
+# task3()
 costs = []
 lows = []
 leasts = []
-for i in range(3):
+for i in range(5):
 	task3()
 	print("\n\nTask 3 passed")
 	avg = math.ceil(cost/count)
@@ -137,9 +137,10 @@ for i in range(3):
 	lows.append(low)
 	leasts.append(least)
 	print("\n AVERAGE COST ", math.ceil(cost/count))
-	print("\n\nALL TESTS PASSED")
+print("\n\nALL TESTS PASSED")
 end = time.time()
 print("\n\nTIME FOR ALL TASKS = ",end-start)
-print("\nAVERAGE ", sum(costs)/len(costs) )
+if len(costs) != 0:
+	print("\nAVERAGE ", sum(costs)/len(costs) )
 print("LESS THAN 11K ", lows)
 print("LEAST 10050 - ", leasts)
