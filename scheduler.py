@@ -138,20 +138,20 @@ class Scheduler:
 						if slotDomain[days] < minSlots:
 							possible = []
 							minSlots = slotDomain[days]
-							assignment = [slots, slotsAssigned[slots][0], days]
+							assignment = [slots, slotsAssigned[slots][0], days, slotsAssigned[slots][2]]
 							possible.append(assignment)
 						elif slotDomain[days] == minSlots:
-							assignment = [slots, slotsAssigned[slots][0], days]
+							assignment = [slots, slotsAssigned[slots][0], days, slotsAssigned[slots][2]]
 							possible.append(assignment)
 				else:
 					for days in slotsAssigned[slots][1]:
 						if slotDomain[days] > maxSlots:
 							possible = []
 							maxSlots = slotDomain[days]
-							assignment = [slots, slotsAssigned[slots][0], days]
+							assignment = [slots, slotsAssigned[slots][0], days, slotsAssigned[slots][2]]
 							possible.append(assignment)
 						elif slotDomain[days] == maxSlots:
-							assignment = [slots, slotsAssigned[slots][0], days]
+							assignment = [slots, slotsAssigned[slots][0], days, slotsAssigned[slots][2]]
 							possible.append(assignment)
 			# need to handle the case where there are equal number of slots for many max days
 			# probably check for the least subjects covered by a tutor and select that
@@ -472,11 +472,21 @@ class Scheduler:
 		slotsAssigned = self.slotCheckMinCost(slotDomain, tutorDomain, selected)
 		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
 		# need to handle
-		possible = self.minSlots(slotsAssigned, slotDomain)
+		possible = [self.minSlots(slotsAssigned, slotDomain), self.slots(self.slotCheckMinCost(slotDomain, tutorDomain, selected))]
 		# print("POSSIBLE ", possible)
 		# print("----- END ----- \n\n\n\n")
 		return possible	
-
+	def slots(self, slotsAssigned):
+		possible = []
+		try:
+			for slots in slotsAssigned:
+				for days in slotsAssigned[slots][1]:
+					assignment = [slots, slotsAssigned[slots][0], days]
+					possible.append(assignment)
+		except:
+			return None
+		return possible
+					
 	def slotCheckLab(self, slotDomain, tutorDomain, selected):
 		available = {}
 		found = False
@@ -606,7 +616,11 @@ class Scheduler:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2 
-			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
+			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
+				for module in moduleDomain:
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
+			elif tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
@@ -625,11 +639,7 @@ class Scheduler:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
-			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
-				for module in moduleDomain:
-					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
-						moduleDomain[module][0].append(tree.leaf.assignment[1])
-			elif tutorDomain[tree.leaf.assignment[1]][1] == 0:
+			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
@@ -843,7 +853,7 @@ class Scheduler:
 				elif moduleIndices:
 					return moduleIndices[0]
 		else:
-			return 0
+			return math.floor(len(possible)/2)
 	#It costs £500 to hire a tutor for a single module.
 	#If we hire a tutor to teach a 2nd module, it only costs £300. (meaning 2 modules cost £800 compared to £1000)
 	#If those two modules are taught on consecutive days, the second module only costs £100. (meaning 2 modules cost £600 compared to £1000)
@@ -880,12 +890,17 @@ class Scheduler:
 		backtracking = False
 		while(moduleDomain):
 			if not backtracking:
-				x = self.moduleMinCost(moduleDomain, tutorDomain, slotDomain)
+				result = self.moduleMinCost(moduleDomain, tutorDomain, slotDomain)
+				x = result[0]
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
 					index = self.searchPossible(x, tutorDomain)
 					sessionType = x[index][1][1]
-					tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, x, index))
+					if x[index][3]:
+						tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, result[1], index))
+					else:
+						tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, result[0], index))
+
 					if sessionType == "module":
 						moduleDomain[x[index][0]][0] = []
 						if len(moduleDomain[x[index][0]][1]) == 0:
