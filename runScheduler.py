@@ -125,7 +125,6 @@ task1()
 print("\n\nTask 1 passed")
 task2()
 print("\n\nTask 2 passed")
-# task3()
 costs = []
 lows = []
 leasts = []
