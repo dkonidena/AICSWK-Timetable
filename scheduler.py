@@ -500,7 +500,7 @@ class Scheduler:
 					available[module] = [tutor, days]
 		# a dict of modules: and tutors with days available
 		return available
-	def backtrackLab(self, moduleDomain, tutorDomain, slotDomain, tree, minCost):
+	def backtrackLab(self, moduleDomain, tutorDomain, slotDomain, tree):
 		# print("deleting", tree.leaf.possible[0])
 		index = tree.leaf.index
 		del tree.leaf.possible[index]
@@ -547,7 +547,7 @@ class Scheduler:
 			slotDomain[tree.leaf.assignment[2]] = 1
 		
 		if (tree.leaf.possible):
-			newIndex = self.searchPossible(tree.leaf.possible, minCost, tutorDomain)
+			newIndex = 0
 			session = tree.leaf.possible[newIndex][1][1]
 			tree.leaf.assignment[0] = tree.leaf.possible[newIndex][0]
 			tree.leaf.assignment[1] = tree.leaf.possible[newIndex][1][0]
@@ -591,7 +591,7 @@ class Scheduler:
 		else:
 			tree.remove()
 			return True
-	def backtrackMinCost(self, moduleDomain, tutorDomain, slotDomain, tree, minCost):
+	def backtrackMinCost(self, moduleDomain, tutorDomain, slotDomain, tree):
 		# print("deleting", tree.leaf.possible[0])
 		index = tree.leaf.index
 		del tree.leaf.possible[index]
@@ -642,7 +642,7 @@ class Scheduler:
 			slotDomain[tree.leaf.assignment[2]] = 1
 		
 		if (tree.leaf.possible):
-			newIndex = self.searchPossible(tree.leaf.possible, minCost, tutorDomain)
+			newIndex = self.searchPossible(tree.leaf.possible, tutorDomain)
 			session = tree.leaf.possible[newIndex][1][1]
 			tree.leaf.assignment[0] = tree.leaf.possible[newIndex][0]
 			tree.leaf.assignment[1] = tree.leaf.possible[newIndex][1][0]
@@ -725,7 +725,7 @@ class Scheduler:
 				x = self.moduleLabChoose(moduleDomain, tutorDomain, slotDomain)
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
-					index = self.searchPossible(x, False, tutorDomain)
+					index = 0
 					sessionType = x[index][1][1]
 					tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, x, index))
 					if sessionType == "module":
@@ -764,7 +764,7 @@ class Scheduler:
 					backtracking = True
 			else:
 				back+=1
-				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree, False)
+				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree)
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
@@ -801,53 +801,49 @@ class Scheduler:
 					days.append(day)
 		return days
 
-	def searchPossible(self, possible, minCost, tutorDomain):
-		if minCost:
-			i = 0
-			moduleIndices = []
-			labIndices = []
-			tutorModules = {}
-			tutorLabs = {}
-			while(i < len(possible)):
-				assignment = possible[i]
-				tutor = assignment[1][0]
-				sessionType = assignment[1][1]
-				if sessionType == "module":
-					bestDays = self.nextDays(tutor, tutorDomain, True)
-					tutorModules[tutor] = bestDays
-				if sessionType == "lab":
-					bestDays = self.nextDays(tutor, tutorDomain, False)
-					tutorLabs[tutor] = bestDays
-				i+=1
-			i=0
-			while(i<len(possible)):
-				assignment = possible[i]
-				tutor = assignment[1][0]
-				day = assignment[2]
-				sessionType = assignment[1][1]
-				if sessionType == "module":
-					if day in tutorModules[tutor]:
-						moduleIndices.append(i)
-				if sessionType == "lab":
-					if day in tutorLabs[tutor]:
-						labIndices.append(i)
-				i+=1
-			if moduleIndices or labIndices:
-				if len(moduleIndices) > len(labIndices):
-					if moduleIndices:
-						return moduleIndices[0]
-					elif labIndices:
-						return labIndices[0]
-				else:
-					if labIndices:
-						return labIndices[0]
-					elif moduleIndices:
-						return moduleIndices[0]
+	def searchPossible(self, possible, tutorDomain):
+		i = 0
+		moduleIndices = []
+		labIndices = []
+		tutorModules = {}
+		tutorLabs = {}
+		while(i < len(possible)):
+			assignment = possible[i]
+			tutor = assignment[1][0]
+			sessionType = assignment[1][1]
+			if sessionType == "module":
+				bestDays = self.nextDays(tutor, tutorDomain, True)
+				tutorModules[tutor] = bestDays
+			if sessionType == "lab":
+				bestDays = self.nextDays(tutor, tutorDomain, False)
+				tutorLabs[tutor] = bestDays
+			i+=1
+		i=0
+		while(i<len(possible)):
+			assignment = possible[i]
+			tutor = assignment[1][0]
+			day = assignment[2]
+			sessionType = assignment[1][1]
+			if sessionType == "module":
+				if day in tutorModules[tutor]:
+					moduleIndices.append(i)
+			if sessionType == "lab":
+				if day in tutorLabs[tutor]:
+					labIndices.append(i)
+			i+=1
+		if moduleIndices or labIndices:
+			if len(moduleIndices) > len(labIndices):
+				if moduleIndices:
+					return moduleIndices[0]
+				elif labIndices:
+					return labIndices[0]
 			else:
-				return 0
+				if labIndices:
+					return labIndices[0]
+				elif moduleIndices:
+					return moduleIndices[0]
 		else:
 			return 0
-
 	#It costs £500 to hire a tutor for a single module.
 	#If we hire a tutor to teach a 2nd module, it only costs £300. (meaning 2 modules cost £800 compared to £1000)
 	#If those two modules are taught on consecutive days, the second module only costs £100. (meaning 2 modules cost £600 compared to £1000)
@@ -887,7 +883,7 @@ class Scheduler:
 				x = self.moduleMinCost(moduleDomain, tutorDomain, slotDomain)
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
-					index = self.searchPossible(x, True, tutorDomain)
+					index = self.searchPossible(x, tutorDomain)
 					sessionType = x[index][1][1]
 					tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, x, index))
 					if sessionType == "module":
@@ -930,7 +926,7 @@ class Scheduler:
 					backtracking = True
 			else:
 				back+=1
-				backtracking = self.backtrackMinCost(moduleDomain, tutorDomain, slotDomain, tree, True)
+				backtracking = self.backtrackMinCost(moduleDomain, tutorDomain, slotDomain, tree)
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
