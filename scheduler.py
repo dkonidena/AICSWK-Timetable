@@ -457,12 +457,6 @@ class Scheduler:
 						selected[module] = []
 						selected[module].append((tutor,"module"))
 						maxMod = tutorDomain[tutor][3]
-					elif tutorDomain[tutor][3] > maxMod and tutorDomain[tutor][1] - 2 >= 0:
-						if module in selected:
-							selected[module].append((tutor,"module"))
-						else:
-							selected[module] = []
-							selected[module].append((tutor,"module"))
 				if minModule[module][1] == "lab":
 					if tutorDomain[tutor][4] > maxLab and tutorDomain[tutor][1] - 1 >= 0:
 						selected.clear()
