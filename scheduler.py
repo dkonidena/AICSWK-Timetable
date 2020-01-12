@@ -135,10 +135,10 @@ class Scheduler:
 		minModule = {}
 		# Choosing the modules with the least tutors available
 		for module in moduleDomain:
-			if self.moduleLength(tutorDomain, moduleDomain[module]) < minTutors:
+			if self.tutorListLength(tutorDomain, moduleDomain[module]) < minTutors:
 				minModule.clear()
 				minModule[module] = moduleDomain[module]
-				minTutors = self.moduleLength(tutorDomain, moduleDomain[module]) 
+				minTutors = self.tutorListLength(tutorDomain, moduleDomain[module]) 
 			elif len(moduleDomain[module]) == minTutors:
 				minModule[module] = moduleDomain[module]
 		# From the modules chosen along with the tutors, choosing the tutor with the max available days
@@ -171,13 +171,22 @@ class Scheduler:
 		possible = self.maxSlots(slotsAssigned, slotDomain)
 		return possible
 
+	'''
+		This method is predominantly used for Task 3. It checks whether the given assignment
+		has been deduced by the Tutor's best days or not. If it is the best days then out of the days
+		chosen the days with the minimum slots are chosen and appended to the list.
+		Otherwise the days with the maximum slots are chosen and appended to the list
+	'''
 	def minSlots(self, slotsAssigned, slotDomain):
 		minSlots = math.inf
 		maxSlots = -1
 		possible = []
 		try:
 			for slots in slotsAssigned:
+				# In the slots checking the variable which stores True if the
+				# best days of the tutor are chosen and False otherwise.
 				if slotsAssigned[slots][2]:
+					# Checking for the Minimum slots if True
 					for days in slotsAssigned[slots][1]:
 						if slotDomain[days] < minSlots:
 							possible = []
@@ -187,6 +196,7 @@ class Scheduler:
 						elif slotDomain[days] == minSlots:
 							assignment = [slots, slotsAssigned[slots][0], days, slotsAssigned[slots][2]]
 							possible.append(assignment)
+				# Checking for the maximum slots if False
 				else:
 					for days in slotsAssigned[slots][1]:
 						if slotDomain[days] > maxSlots:
@@ -197,9 +207,6 @@ class Scheduler:
 						elif slotDomain[days] == maxSlots:
 							assignment = [slots, slotsAssigned[slots][0], days, slotsAssigned[slots][2]]
 							possible.append(assignment)
-			# need to handle the case where there are equal number of slots for many max days
-			# probably check for the least subjects covered by a tutor and select that
-			# the least subjects are also equal then choose random
 		except:
 			return None
 		return possible
@@ -250,6 +257,14 @@ class Scheduler:
 					available[module] = [tutor, days]
 		# a dict of modules: and tutors with days available
 		return available
+
+	'''
+		This is a sub-heuristic function used by Task 3's heuristic function. When checking whether
+		the selected Tutors day align with the available slots in the slotDomain, out of the selected days
+		if the best days of the tutor (module or lab) intersect with it, then the intersecting set is passed
+		as the day set setting the flag as True so that out of these days the days with the minimum slots are
+		chosen.
+	'''
 	def slotCheckMinCost(self, slotDomain, tutorDomain, selected):
 		available = {}
 		found = False
@@ -257,9 +272,11 @@ class Scheduler:
 			available[module] = {}
 			for tutor in selected[module]:
 				days = []
+				# for all the available days in the slot domain
 				for day in slotDomain:
+					# if the slotDomain's day is available in the tutor's domain
+					# then append the day with the possible assignments.
 					if day in tutorDomain[tutor[0]][0]:
-						# can do a list of all the days and then choosing the one with the max slots
 						if tutor[1] == "module":
 							if tutorDomain[tutor[0]][0][day] - 2 >= 0:
 								days.append(day)
@@ -270,11 +287,15 @@ class Scheduler:
 								found = True
 				if found:
 					if tutor[1] == "module":
+						# Checking if the tutor's best days intersect, True is to indicate 
+						# that its a module and need the best days for the modules
 						if list(set(days) & set(self.nextDays(tutor[0], tutorDomain, True))):
 							available[module] = [tutor, list(set(days) & set(self.nextDays(tutor[0], tutorDomain, True))), True]
 						else:
 							available[module] = [tutor, days, False]
 					if tutor[1] == "lab":
+						# Checking if the tutor's best days intersect, False is to indicate 
+						# that its a Lab and need the best days for the labs
 						if list(set(days) & set(self.nextDays(tutor[0], tutorDomain, False))):
 							available[module] = [tutor, list(set(days) & set(self.nextDays(tutor[0], tutorDomain, False))), True]
 						else:
@@ -282,12 +303,13 @@ class Scheduler:
 		# a dict of modules: and tutors with days available
 		return available
 
-	def printTree(self, tree):
-		node = tree.root
-		while(node is not None):
-			print(node.assignment)
-			node = node.next
-
+	'''
+		This is a sorting method which is used to sort the list of tutors according to their
+		number of topics in their respective expertise. This is done so that as a tie-breaker
+		when it comes down to the wire, the tutors with a lesser number of topics get picked 
+		leaving the ones with more topics so that they might be used elsewhere.
+		This uses mergeSort technique.
+	'''
 	def mergeSortTutors(self, tutors):
 		if len(tutors)>1:
 			mid = len(tutors)//2
@@ -322,6 +344,7 @@ class Scheduler:
 		while(node is not None):
 			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], node.assignment[4])
 			node = node.next
+
 	'''
 		This backtrack method is for Task 1 - createSchedule(). When this is called, it indicates
 		that the present/latest assignment is not legal because the subsequent run had failed.
@@ -455,7 +478,7 @@ class Scheduler:
 		This method returns the count of the tutors in the tutorList passed as the parameter
 		whose available credits are not 0.
 	'''
-	def moduleLength(self, tutorDomain, tutorList):
+	def tutorListLength(self, tutorDomain, tutorList):
 		c = 0
 		for tutor in tutorList:
 			if tutorDomain[tutor][1] > 0:
@@ -484,15 +507,15 @@ class Scheduler:
 		for module in moduleDomain:
 			i = 0
 			while(i<len(moduleDomain[module])):
-				if self.moduleLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+				if self.tutorListLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
 					minModule.clear()
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
-						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
+						minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
 					elif i == 1:
 						minModule[module] = (moduleDomain[module][i], "lab")
-						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
-				elif self.moduleLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+						minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
+				elif self.tutorListLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
 					elif i == 1:
@@ -560,15 +583,15 @@ class Scheduler:
 		for module in moduleDomain:
 			i = 0
 			while(i<len(moduleDomain[module])):
-				if self.moduleLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+				if self.tutorListLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
 					minModule.clear()
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
-						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
+						minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
 					elif i == 1:
 						minModule[module] = (moduleDomain[module][i], "lab")
-						minTutors = self.moduleLength(tutorDomain, moduleDomain[module][i])
-				elif self.moduleLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+						minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
+				elif self.tutorListLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
 					if i == 0:
 						minModule[module] = (moduleDomain[module][i], "module")
 					elif i == 1:
@@ -888,7 +911,7 @@ class Scheduler:
 		
 		# If the possible list of the node has elements, assign the first available one and update domains.
 		if (tree.leaf.possible):
-			newIndex = self.searchPossible(tree.leaf.possible, tutorDomain)
+			newIndex = self.searchPossible(tree.leaf.possible)
 			session = tree.leaf.possible[newIndex][1][1]
 			tree.leaf.assignment[0] = tree.leaf.possible[newIndex][0]
 			tree.leaf.assignment[1] = tree.leaf.possible[newIndex][1][0]
@@ -1130,50 +1153,17 @@ class Scheduler:
 				if tutorDomain[tutor][2][day] < 2 and tutorDomain[tutor][2][day] > 0:
 					days.append(day)
 		return days
-
-	def searchPossible(self, possible, tutorDomain):
-		i = 0
-		moduleIndices = []
-		labIndices = []
-		tutorModules = {}
-		tutorLabs = {}
-		while(i < len(possible)):
-			assignment = possible[i]
-			tutor = assignment[1][0]
-			sessionType = assignment[1][1]
-			if sessionType == "module":
-				bestDays = self.nextDays(tutor, tutorDomain, True)
-				tutorModules[tutor] = bestDays
-			if sessionType == "lab":
-				bestDays = self.nextDays(tutor, tutorDomain, False)
-				tutorLabs[tutor] = bestDays
-			i+=1
-		i=0
-		while(i<len(possible)):
-			assignment = possible[i]
-			tutor = assignment[1][0]
-			day = assignment[2]
-			sessionType = assignment[1][1]
-			if sessionType == "module":
-				if day in tutorModules[tutor]:
-					moduleIndices.append(i)
-			if sessionType == "lab":
-				if day in tutorLabs[tutor]:
-					labIndices.append(i)
-			i+=1
-		if moduleIndices or labIndices:
-			if len(moduleIndices) > len(labIndices):
-				if moduleIndices:
-					return moduleIndices[0]
-				elif labIndices:
-					return labIndices[0]
-			else:
-				if labIndices:
-					return labIndices[0]
-				elif moduleIndices:
-					return moduleIndices[0]
+	'''
+		This is used for task 3, returning the middle element so that the probability increases 
+		on backtrack. The middle element is only chosen when the length of the possible is more than 5
+		because then the wide range of other possiblities with a hint of randmomness exist in case
+		of backtrack
+	'''
+	def searchPossible(self, possible):
+		if len(possible) < 5:
+			return 0
 		else:
-			return math.floor(len(possible)/2)
+			return math.ceil(len(possible)/2)
 	#It costs £500 to hire a tutor for a single module.
 	#If we hire a tutor to teach a 2nd module, it only costs £300. (meaning 2 modules cost £800 compared to £1000)
 	#If those two modules are taught on consecutive days, the second module only costs £100. (meaning 2 modules cost £600 compared to £1000)
@@ -1223,7 +1213,7 @@ class Scheduler:
 				# checking if the heuristic returned any valid, or set to backtrack
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
-					index = self.searchPossible(x, tutorDomain)
+					index = self.searchPossible(x)
 					sessionType = x[index][1][1]
 					# If the current assignment is based on the best days then add the possible solutions
 					# of the best days otherwise the normal possibles would be chosen.
@@ -1366,8 +1356,9 @@ class Scheduler:
 				dayNumber = dayNumber + 1
 	'''
 		This method is used to return a True/False if a tutor can teach the module
-		True to check for Modules
-		False to check for Labs
+		labOrModule value - 
+			True to check for Modules
+			False to check for Labs
 	'''
 
 	def tutorCanTeach(self, tutor, module, labOrModule):
