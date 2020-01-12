@@ -89,6 +89,7 @@ def task2():
 				print("Schedule has a cost of " + str(tt.cost))
 				print("\n\n")
 			else:
+				print(str(tt.schedule))
 				print("PROBLEM")
 				print(problem)
 				exit()
