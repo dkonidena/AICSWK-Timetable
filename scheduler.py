@@ -5,7 +5,23 @@ import timetable
 import random
 import math
 import time
-
+'''
+	This is the class which depicts the node in the search tree.
+	It stores the assignment of a given slot i.e. - 
+		1. Module
+		2. Tutor
+		3. Day
+		4. Slot on Day
+		5. Session Type
+		6. Possible - all the possible assignments that the heuristics have calculated, in case of
+			backtrack will be used as other options and delete the one from the list
+			which is the current assignment
+		7. Index - the index of the current assignment in the possible list to delete on backtrack
+			and not re-use it again on subsequent backtrack calls
+	It also stores the previous and next nodes respectively.
+	When the current node's possible list gets exhausted and still has to backtrack then the previous
+	node is taken into consideration and then run accordingly.
+'''
 class Node:
 	def __init__(self, module, tutor, day, slot, sessionType, possible, index):
 		self.assignment = [module, tutor, day, slot, sessionType]
@@ -13,10 +29,21 @@ class Node:
 		self.index = index
 		self.prev = None
 		self.next = None
+'''
+	This is the structure to store the nodes so that the analysis of the current assignments
+	for backtrack or to assign the final timetable structure is done.
+	Stores the root to indicate the start of the tree
+	Stores the leaf to indicate the latest/current state of the tree.
+'''
+
 class Tree:
 	def __init__(self):
 		self.root = None
 		self.leaf = None
+	'''
+		Adds the new node into the tree by updating the leaf's next and prev respectively.
+		If it is the first node then updating the root and leaf respectively.
+	'''
 	def add(self, node):
 		if(self.root == None):
 			self.root = node
@@ -25,6 +52,12 @@ class Tree:
 			node.prev = self.leaf
 			self.leaf.next = node
 			self.leaf = node
+	'''
+		Removes the node from the tree there by updating the leaf/root accordingly.
+		If there is no leaf indicates that the tree is empty and there's nothing to 
+		removed. 
+		Else, the leaf's prev and next are updating accordingly. 
+	'''
 	def remove(self):
 		if self.leaf == None:
 			return None
@@ -76,17 +109,31 @@ class Scheduler:
 	#Furthermore, you should not import anything else beyond what has been imported above. 
 
 	#This method should return a timetable object with a schedule that is legal according to all constraints of task 1.
+	'''
+		This returns a dict of the the legal domains of the given values.
+		Namely - modules, tutors, days, slots.
+	'''
 	def domains(self, slots, modules, tutors):
-		return {"modules":modules, 
-		"tutors":tutors, 
-		"days":["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], 
-		"slots":slots}
+		return {"modules": modules, 
+				"tutors": tutors, 
+				"days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], 
+				"slots": slots}
 	# choosing the module with minimum tutors available (tutors are dynamically updated in all the places)
+	'''
+		This is the heuristic function that is used for Task 1 - createSchedule()
+		From the module domain it generates a list of all the modules which have 
+		gotten the least number of tutors. From this list along with the list of tutors for each module, 
+		the modules are filtered by the tutors having the maximum 
+		number of days available. This list is passed to the method slotCheck() which checks whether
+		the available days of the tutors selected for the respective modules 
+		have got the required slots and if they do, adds it to the possible days.
+		From this possible module-tutor-days, the tuples with the days with the maximum slots 
+		get selected and then returned as a list - "possible". 
+	'''
 	def moduleChoose(self, moduleDomain, tutorDomain, slotDomain):
 		minTutors = math.inf
 		minModule = {}
-		# print("MODULE DOMAIN ", moduleDomain)
-		# choosing the module with the least tutors available
+		# Choosing the modules with the least tutors available
 		for module in moduleDomain:
 			if self.moduleLength(tutorDomain, moduleDomain[module]) < minTutors:
 				minModule.clear()
@@ -94,9 +141,9 @@ class Scheduler:
 				minTutors = self.moduleLength(tutorDomain, moduleDomain[module]) 
 			elif len(moduleDomain[module]) == minTutors:
 				minModule[module] = moduleDomain[module]
-		# from the modules chosen along with the tutors, choosing the tutor with the max available days
-		# which implies the max available slots - checking slots too
-		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
+		# From the modules chosen along with the tutors, choosing the tutor with the max available days
+		# which implies the max available slots because for this task a tutor can only teach a single
+		# module a day
 		selected = {}
 		maxDays = -1
 		for module in minModule:
@@ -112,19 +159,16 @@ class Scheduler:
 					else:
 						selected[module] = []
 						selected[module].append(tutor)
-		# print("FROM THE SHORTLISTED MODULES-TUTORS, SELECTING THE MODULE-TUTORS WHERE TUTORS HAVE THE MAX DAYS")
-		# print(selected)
-		# if maxDays > 0:
-		# 	print("")
-		# else:
-		# 	print("") # if in the checking nothing changed
-		# need to handle
+
+		# From the selected pairs, the list is passed to this method to check
+		# whose days match with the available days in the slotDomain
 		slotsAssigned = self.slotCheck(slotDomain, tutorDomain, selected)
-		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
-		# need to handle
+		
+		# From these filtered tuples, the days with the maximum slots get put into the final 
+		# list which is returned to the task scheduler out of which the first one is taken
+		# into consideration and the remaining are put into the possibles in the node
+		# which on backtrack can be used accordingly.
 		possible = self.maxSlots(slotsAssigned, slotDomain)
-		# print("POSSIBLE ", possible)
-		# print("----- END ----- \n\n\n\n")
 		return possible
 
 	def minSlots(self, slotsAssigned, slotDomain):
@@ -159,10 +203,17 @@ class Scheduler:
 		except:
 			return None
 		return possible
+	'''
+		From the given argument (mainly concerned with days) referring the slotDomain
+		filters the ones with the maximum slots available and then appends it to the 
+		list being returned.
+	'''
 	def maxSlots(self, slotsAssigned, slotDomain):
 		maxSlots = -1
 		possible = []
 		try:
+			# iterating through the given list and checking the respective days for each individual possible 
+			# assignment. If it is a max or equals the max number of slots. 
 			for slots in slotsAssigned:
 				for days in slotsAssigned[slots][1]:
 					if slotDomain[days] > maxSlots:
@@ -173,14 +224,14 @@ class Scheduler:
 					elif slotDomain[days] == maxSlots:
 						assignment = [slots, slotsAssigned[slots][0], days]
 						possible.append(assignment)
-			# need to handle the case where there are equal number of slots for many max days
-			# probably check for the least subjects covered by a tutor and select that
-			# the least subjects are also equal then choose random
 		except:
 			return None
 		return possible
-
-	# if slot domain value is 0 then day should also be deleted
+	'''
+		From the selected assignments with the possible days, add/filter the days
+		which align with the present slotDomain, i.e. which allow a legal assignment
+		and not assigning more than 1 to any slot.
+	'''
 	def slotCheck(self, slotDomain, tutorDomain, selected):
 		available = {}
 		found = False
@@ -188,9 +239,11 @@ class Scheduler:
 			available[module] = {}
 			for tutor in selected[module]:
 				days = []
+				# for all the available days in the slot domain
 				for day in slotDomain:
+					# if the slotDomain's day is available in the tutor's domain
+					# then append the day with the possible assignments.
 					if day in tutorDomain[tutor][0]:
-						# can do a list of all the days and then choosing the one with the max slots
 						days.append(day)
 						found = True
 				if found:
@@ -260,39 +313,65 @@ class Scheduler:
 				tutors[k] = righthalf[j]
 				j+=1
 				k+=1
-	
+	'''
+		This method, after assigning all the slots in the timetable, is to assign the slots stored in the nodes 
+		to the timetable object. Essentially to return the final object after everything has been assigned legally.
+	'''
 	def assignTree(self, tree, timetableObj):
 		node = tree.root
 		while(node is not None):
 			timetableObj.addSession(node.assignment[2], node.assignment[3], node.assignment[1], node.assignment[0], node.assignment[4])
 			node = node.next
-
+	'''
+		This backtrack method is for Task 1 - createSchedule(). When this is called, it indicates
+		that the present/latest assignment is not legal because the subsequent run had failed.
+		So to address this the present assignment is reverted, i.e. deleted and added back to the respective
+		domains. Then if the node's possible list has any more assignments that could be tested then the first
+		available one is used and domains are updated accordingly. If not the present node is deleted and then
+		backracks onto the previous node.
+	'''
 	def backtrack(self, moduleDomain, tutorDomain, slotDomain, tree):
-		# print("deleting", tree.leaf.possible[0])
+		# Deleting the current assignment from the possible list of the node
 		del tree.leaf.possible[0]
+		# Re-add the module along with its eligible tutor list back into the module domain
 		moduleDomain[tree.leaf.assignment[0]] = self.eligibleTutors(tree.leaf.assignment[0], True)
+		# Re-add the day assigned back into the tutor's domain
 		tutorDomain[tree.leaf.assignment[1]][0].append(tree.leaf.assignment[2])
+		# If due to this assignment all the tutor credits have become 0, when assigning the tutor
+		# would've been deleted from all the moduleDomains because he/she would've been unavailable
+		# So add it back to all the ones he/she can teach.
 		if tutorDomain[tree.leaf.assignment[1]][1] == 0:
 			for module in moduleDomain:
 				if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 					moduleDomain[module].append(tree.leaf.assignment[1]) 
+		# Add the credit back to him
 		tutorDomain[tree.leaf.assignment[1]][1] +=1
+		# If the day assigned is in the slot domain, add it otherwise create it and assign 1
 		if tree.leaf.assignment[2] in slotDomain:
 			slotDomain[tree.leaf.assignment[2]] +=1
 		else:
 			slotDomain[tree.leaf.assignment[2]] = 1
 		
+		# If the possible list of the node has elements, assign the first available one and update domains.
 		if (tree.leaf.possible):
 			tree.leaf.assignment[0] = tree.leaf.possible[0][0]
 			tree.leaf.assignment[1] = tree.leaf.possible[0][1]
 			tree.leaf.assignment[2] = tree.leaf.possible[0][2]
 			tree.leaf.assignment[3] = slotDomain[tree.leaf.possible[0][2]]
+			# Updating the moduleDomain, i.e. deleting the module being assigned
 			del moduleDomain[tree.leaf.possible[0][0]]
+			# Updating the slotDomain, i.e. subtracting a credit from the day being assigned
+			# If it is 0 after subtraction then deleting the day.
 			slotDomain[tree.leaf.possible[0][2]] -=1
 			if(slotDomain[tree.leaf.possible[0][2]] == 0):
 				del slotDomain[tree.leaf.possible[0][2]]
+			# Since for this task a tutor can only teach a single module a day, 
+			# deleting the day which has been assigned from the tutorDomain
 			tutorDomain[tree.leaf.possible[0][1]][0].remove(tree.leaf.possible[0][2])
+			# Subtracting 1 from the tutorDomain's overall credits
 			tutorDomain[tree.leaf.possible[0][1]][1] -=1
+			# If after subtraction, it is 0, delete this tutor from the modules in the ModuleDomain
+			# which can be taught by this tutor.
 			if tutorDomain[tree.leaf.possible[0][1]][1] == 0:
 				for module in moduleDomain:
 					if tree.leaf.possible[0][1] in moduleDomain[module]:
@@ -302,45 +381,69 @@ class Scheduler:
 			tree.remove()
 			return True
 
-
+	'''
+		This method is used to create/return a timetable object for Task 1.  
+	'''
 	def createSchedule(self):
 		#Do not change this line
 		start = time.time()
 		timetableObj = timetable.Timetable(1)
+		# Assigning the formal domains, with the required slots, tutors and modules.
 		domain = self.domains([1,2,3,4,5], self.moduleList, self.tutorList)
+		# SlotDomain to store and maintain the days with available slots
 		slotDomain = {}
 		for day in domain["days"]:
 			slotDomain[day] = 5
+		# ModuleDomain to store and maintain the list of modules with the legal tutors who are available
 		moduleDomain = {}
 		for module in domain["modules"]:
 			moduleDomain[module] = self.eligibleTutors(module, True)
+		# TutorDomain to store and maintain the list of tutors with their available days and credits
 		tutorDomain = {}
+		# Sorting the tutorlist in the ascending order of their to number of topics in the expertise
 		self.mergeSortTutors(self.tutorList)
 		for tutor in domain["tutors"]:
 			tutorDomain[tutor] = [domain["days"].copy(), 2]
 		tree = Tree()
 		back = 0
 		backtracking = False
+		# Iterate until there are no modules in the moduleDomain, and assign the tree after the loop comes out
 		while(moduleDomain):
+			# checking if the mode isn't set to backtracking
 			if not backtracking:
+				# using the heuristic function for Task 1 to choose the assignment
 				x = self.moduleChoose(moduleDomain, tutorDomain, slotDomain)
+				# checking if the heuristic returned any valid, or set to backtrack
 				if not (x == None or len(x) == 0):
+					# adding this assignment along with the other possible assignments into a node and that node into a tree
 					tree.add(Node(x[0][0],x[0][1],x[0][2], slotDomain[x[0][2]], "module", x, 0))
+					# Updating the moduleDomain, i.e. deleting the module being assigned
 					del moduleDomain[x[0][0]]
+					# Updating the slotDomain, i.e. subtracting a credit from the day being assigned
+					# If it is 0 after subtraction then deleting the day.
 					slotDomain[x[0][2]] -=1
 					if(slotDomain[x[0][2]] == 0):
 						del slotDomain[x[0][2]]
+					# Since for this task a tutor can only teach a single module a day, 
+					# deleting the day which has been assigned from the tutorDomain
 					tutorDomain[x[0][1]][0].remove(x[0][2])
+					# Subtracting 1 from the tutorDomain's overall credits
 					tutorDomain[x[0][1]][1] -=1
+					# If after subtraction, it is 0, delete this tutor from the modules in the ModuleDomain
+					# which can be taught by this tutor.
 					if tutorDomain[x[0][1]][1] == 0:
 						for module in moduleDomain:
 							if x[0][1] in moduleDomain[module]:
 								moduleDomain[module].remove(x[0][1])
+				# if there are no valid assignments returned by the heuristics, set to backtrack
 				else:
 					back+=1
 					backtracking = True
+			# if backtrack is set then call backtrack method for this task
 			else:
 				backtracking = self.backtrack(moduleDomain, tutorDomain, slotDomain, tree)
+		# after coming out of the loop, i.e. assigning all the modules-tutors-day-slots, assign the tree
+		# into a TT object.
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
@@ -348,17 +451,36 @@ class Scheduler:
 		print("TIME ELAPSED ", end-start)
 		#Do not change this line
 		return timetableObj
+	'''
+		This method returns the count of the tutors in the tutorList passed as the parameter
+		whose available credits are not 0.
+	'''
 	def moduleLength(self, tutorDomain, tutorList):
 		c = 0
 		for tutor in tutorList:
-			if tutorDomain[tutor][1] != 0:
+			if tutorDomain[tutor][1] > 0:
 				c+=1
 		return c
 
+	'''
+		This is the heuristic function that is used for Task 2 - createLabSchedule().
+		From the moduleDomain from this task - [(moduleTutors), (labTutors)] - for each 
+		module, the module with the least count (any sessionType i.e. module/lab) will 
+		be appended to the list. For each module both the lists (eligible tutors for the module
+		and eligible tutors for the lab) are checked.
+		Then from this filtered list the tutors with the maximum days are chosen. There are
+		separate maximum day counters for both the sessiontypes. 
+		In both these heuristics the respective session types are tagged along with the 
+		selected module-tutor-days.
+		Then for the selected module-tutors-days (modules with the least tutors who have
+		the maximum number of days) the tutor-days are checked against the slotDomain which 
+		validates and filters the ones whose slots are available and out of these 
+		filtered days the days with the maximum slots are taken and returned as the result
+	'''
 	def moduleLabChoose(self, moduleDomain, tutorDomain, slotDomain):
 		minTutors = math.inf
 		minModule = {}
-		# choosing the module with the least tutors available
+		# Choosing the modules with the least tutors available (module or lab sessions)
 		for module in moduleDomain:
 			i = 0
 			while(i<len(moduleDomain[module])):
@@ -376,9 +498,9 @@ class Scheduler:
 					elif i == 1:
 						minModule[module] = (moduleDomain[module][i], "lab")
 				i+=1
-		# from the modules chosen along with the tutors, choosing the tutor with the min available days
-		# which implies the min available slots - checking slots too
-		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
+		# From the modules chosen along with the tutors and the sessionType,
+		# choosing the tutor with the min available days 
+		# and checking the tutor's credits eligibility as well.
 		selected = {}
 		maxDaysMod = -1
 		maxDaysLab = -1
@@ -408,24 +530,33 @@ class Scheduler:
 						else:
 							selected[module] = []
 							selected[module].append((tutor,"lab"))
-		# print("FROM THE SHORTLISTED MODULES-TUTORS, SELECTING THE MODULE-TUTORS WHERE TUTORS HAVE THE MAX DAYS")
-		# print(selected)
-		# if maxDays > 0:
-		# 	print("")
-		# else:
-		# 	print("") # if in the checking nothing changed
-		# need to handle
+		# From the selected options/assignments filtering the ones whose tutors'
+		# supposed days are available or co align with the slotDomain (i.e. that 
+		# they are eligible) 
 		slotsAssigned = self.slotCheckLab(slotDomain, tutorDomain, selected)
-		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
-		# need to handle
+		# From the eligible days (entire options included), select the days
+		# which have the maximum number of slots.
 		possible = self.maxSlots(slotsAssigned, slotDomain)
-		# print("POSSIBLE ", possible)
-		# print("----- END ----- \n\n\n\n")
 		return possible	
+	'''
+		This is the heuristic function for Task 3 - createMinCostSchedule().
+		From the moduleDomain from this task - [(moduleTutors), (labTutors)] - for each 
+		module, the module with the least count (any sessionType i.e. module/lab) will 
+		be appended to the list. For each module both the lists (eligible tutors for the module
+		and eligible tutors for the lab) are checked.
+		Then from these selected options, i.e. the tutors are filtered on the basis of who 
+		is the busiest. If it is a "module" then only 'a' option is chosen from the options
+		but if it is a "lab" then all the most busiest are chosen.
+		Then from the selected options if the tutor's best days intersect with the days 
+		available from the slotDomain, the best days are chosen as the options otherwise the
+		days available. With those filtered options, if the best days are chosen then the days with
+		the minimum slots are selected but if any other days are chosen then the days
+		with the maximum slots. 	
+	'''
 	def moduleMinCost(self, moduleDomain, tutorDomain, slotDomain):
 		minTutors = math.inf
 		minModule = {}
-		# choosing the module with the least tutors available
+		# Choosing the modules with the least tutors available (module or lab sessions)
 		for module in moduleDomain:
 			i = 0
 			while(i<len(moduleDomain[module])):
@@ -443,9 +574,8 @@ class Scheduler:
 					elif i == 1:
 						minModule[module] = (moduleDomain[module][i], "lab")
 				i+=1
-		# from the modules chosen along with the tutors, choosing the tutor with the min available days
-		# which implies the min available slots - checking slots too
-		# print("SHORTLISTED MODULES WITH LEAST TUTORS ", minModule)
+		# From the modules chosen along with the tutors and the sessionType, 
+		# choose the ones who are the busiest 
 		selected = {}
 		maxMod = -1
 		maxLab = -1
@@ -469,13 +599,18 @@ class Scheduler:
 						else:
 							selected[module] = []
 							selected[module].append((tutor,"lab"))
+		# From the selected options filtering out the days which aren't legal and checking if 
+		# any of the days intersect with the tutor's present best days and if so put the intersection in
 		slotsAssigned = self.slotCheckMinCost(slotDomain, tutorDomain, selected)
-		# print("MAX AVAILABLE TUTORS WITH SLOTS AVAILABLE ", slotsAssigned)
-		# need to handle
+		# If the best days are used, select the day with the minimum number of slots available.
+		# Otherwise maximum.
 		possible = [self.minSlots(slotsAssigned, slotDomain), self.slots(self.slotCheckMinCost(slotDomain, tutorDomain, selected))]
-		# print("POSSIBLE ", possible)
-		# print("----- END ----- \n\n\n\n")
 		return possible	
+
+	'''
+		This method is used to put all the days into the options when the tutor's best 
+		days are legal.
+	'''
 	def slots(self, slotsAssigned):
 		possible = []
 		try:
@@ -487,6 +622,11 @@ class Scheduler:
 			return None
 		return possible
 					
+	'''
+		From the selected assignments with the possible days, add/filter the days
+		which align with the present slotDomain, i.e. which allow a legal assignment
+		and not assigning more than 1 to any slot.
+	'''
 	def slotCheckLab(self, slotDomain, tutorDomain, selected):
 		available = {}
 		found = False
@@ -510,52 +650,86 @@ class Scheduler:
 					available[module] = [tutor, days]
 		# a dict of modules: and tutors with days available
 		return available
+
+	'''
+		This backtrack method is for Task 2 - createLabSchedule(). When this is called, it indicates
+		that the present/latest assignment is not legal because the subsequent run had failed.
+		So to address this the present assignment is reverted, i.e. deleted and added back to the respective
+		domains. Then if the node's possible list has any more assignments that could be tested then the first
+		available one is used and domains are updated accordingly. If not the present node is deleted and then
+		backracks onto the previous node.
+		Updating the domains are specific and dependent on the session type been assigned currently.
+	'''
 	def backtrackLab(self, moduleDomain, tutorDomain, slotDomain, tree):
-		# print("deleting", tree.leaf.possible[0])
 		index = tree.leaf.index
+		# Deleting the current assignment from the possible list of the node
 		del tree.leaf.possible[index]
 		sessionType = tree.leaf.assignment[4]
+		# Checking for the session type in order to update the domains accordingly 
 		if sessionType == "module":
+			# If the current module is in the module domain then re-assign the 0th element
+			# to the eligible tutors, otherwise assign 2 empty lists and then assign the 1st
+			# (0th element) to the eligble tutors of the module
 			if tree.leaf.assignment[0] in moduleDomain:
 				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
 			else :
 				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
 				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
+			# If the current day is in the tutorDomains day domain then add 2
+			# credits back to it, otherwise assign 2 credits to it appending.
 			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2
+			# If the tutors overall credits became 0 with this assignment then add it
+			# back to all the modules which can be taught (mod and labs) by this tutor
 			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
+			# Updating the overall credits of the tutor
 			tutorDomain[tree.leaf.assignment[1]][1] +=2
 		if sessionType == "lab":
+			# If the current module is in the module domain then re-assign the 1st element
+			# to the eligible tutors, otherwise assign 2 empty lists and then assign the 2nd
+			# (1st element) to the eligble tutors of the module
 			if tree.leaf.assignment[0] in moduleDomain:
 				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
 			else :
 				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
 				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
+			# If the current day is in the tutorDomains day domain then add 2
+			# credits back to it, otherwise assign 2 credits to it appending.
 			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
+			# If the tutors overall credits became 1 with this assignment then add it
+			# back to all the modules which can be taught (only modules because
+			# since its 1 it wouldn't have been deleted from the labs) by this tutor
 			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
+			# If the tutors overall credits became 0 with this assignment then add it
+			# back to all the modules which can be taught (only labs because on re-adding
+			# this credit, it will only be 1 which isn't sufficent to teach a module) by this tutor
 			elif tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
+			# Updating the overall credits of the tutor
 			tutorDomain[tree.leaf.assignment[1]][1] +=1
+		# If the day assigned currently is in the slotDomain
+		# then add the slot count back to it otherwise assign 1 to it.
 		if tree.leaf.assignment[2] in slotDomain:
 			slotDomain[tree.leaf.assignment[2]] +=1
 		else:
 			slotDomain[tree.leaf.assignment[2]] = 1
 		
+		# If the possible list of the node has elements, assign the first available one and update domains.
 		if (tree.leaf.possible):
 			newIndex = 0
 			session = tree.leaf.possible[newIndex][1][1]
@@ -565,28 +739,52 @@ class Scheduler:
 			tree.leaf.assignment[3] = slotDomain[tree.leaf.possible[newIndex][2]]
 			tree.leaf.assignment[4] = session
 			tree.leaf.index = newIndex
+			# checking the sessiontype been assigned to update the domains accordingly
 			if session == "module":
+				# Since its a module, assigning an empty set to it (0th) indicating that the
+				# module session has been fulfilled for this module
 				moduleDomain[tree.leaf.possible[newIndex][0]][0] = []
+				# Checking if the lab session is also fulfilled (if its an empty set)
+				# if so, then deleting the module from the moduleDomain
 				if len(moduleDomain[tree.leaf.possible[newIndex][0]][1]) == 0:
 					del moduleDomain[tree.leaf.possible[newIndex][0]]
+				# Updating the day slots for the day been assigned
 				slotDomain[tree.leaf.possible[newIndex][2]] -= 1
+				# If after updating the day slots, the day's remaining slots become 0
+				# then it is deleted from the slotDomain
 				if(slotDomain[tree.leaf.possible[newIndex][2]] == 0):
 					del slotDomain[tree.leaf.possible[newIndex][2]]
+				# Updating the tutor's day credits in the tutorDomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] -=2
+				# If the day credits equal to 0 then delete the day from the tutorDays
 				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
 					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
+				# Updating the overall credits of the tutor in the tutordomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=2
 			if session == "lab":
+				# Since its a module, assigning an empty set to it (1st) indicating that the
+				# lab session has been fulfilled for this module
 				moduleDomain[tree.leaf.possible[newIndex][0]][1] = []
+				# Checking if the module session is also fulfilled (if 1st element is an empty set)
+				# if so, then deleting the module from the moduleDomain
 				if len(moduleDomain[tree.leaf.possible[newIndex][0]][0]) == 0:
 					del moduleDomain[tree.leaf.possible[newIndex][0]]
+				# Updating the day slots for the day been assigned
 				slotDomain[tree.leaf.possible[newIndex][2]] -= 1
+				# If after updating the day slots, the day's remaining slots become 0
+				# then it is deleted from the slotDomain
 				if(slotDomain[tree.leaf.possible[newIndex][2]] == 0):
 					del slotDomain[tree.leaf.possible[newIndex][2]]
+				# Updating the tutor's day credits in the tutorDomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] -=1
+				# If the day credits equal to 0 then delete the day from the tutorDays
 				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
 					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
+				# Updating the overall credits of the tutor in the tutordomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=1
+			# If after updating the overall credits of the tutor, they are 0
+			# then deleting it from all the modules where it is eligible because
+			# the tutor isn't available anymore.
 			if tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 1:
 				for module in moduleDomain:
 					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
@@ -601,56 +799,94 @@ class Scheduler:
 		else:
 			tree.remove()
 			return True
+	'''
+		This backtrack method is for Task 3 - createMinCostSchedule(). When this is called, it indicates
+		that the present/latest assignment is not legal because the subsequent run had failed.
+		So to address this the present assignment is reverted, i.e. deleted and added back to the respective
+		domains. Then if the node's possible list has any more assignments that could be tested then the first
+		available one is used and domains are updated accordingly. If not the present node is deleted and then
+		backracks onto the previous node.
+		Updating the domains are specific and dependent on the session type been assigned currently.
+	'''
 	def backtrackMinCost(self, moduleDomain, tutorDomain, slotDomain, tree):
 		# print("deleting", tree.leaf.possible[0])
 		index = tree.leaf.index
+		# Deleting the current assignment from the possible list of the node
 		del tree.leaf.possible[index]
 		sessionType = tree.leaf.assignment[4]
+		# Checking for the session type in order to update the domains accordingly 
 		if sessionType == "module":
+			# If the current module is in the module domain then re-assign the 0th element
+			# to the eligible tutors, otherwise assign 2 empty lists and then assign the 1st
+			# (0th element) to the eligble tutors of the module
 			if tree.leaf.assignment[0] in moduleDomain:
 				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
 			else :
 				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
 				moduleDomain[tree.leaf.assignment[0]][0] = self.eligibleTutors(tree.leaf.assignment[0], True)
+			# If the current day is in the tutorDomains day domain then add 2
+			# credits back to it, otherwise assign 2 credits to it appending.
 			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 2
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 2 
+			# If the tutors overall credits became 1 with this assignment then add it
+			# back to all the modules which can be taught (only modules because it wouldn't
+			# have been deleted from the lab session domains) by this tutor
 			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
+			# If the tutors overall credits became 0 with this assignment then add it
+			# back to all the modules which can be taught (mod and labs) by this tutor
 			elif tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
 						moduleDomain[module][0].append(tree.leaf.assignment[1]) 
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
+			# Updating the overall credits of the tutor
 			tutorDomain[tree.leaf.assignment[1]][1] +=2
+			# Updating the number of modules been taught currently by the tutor
 			tutorDomain[tree.leaf.assignment[1]][3] -=1
+			# Updating the number of credits in the other days copy to check for best days
 			tutorDomain[tree.leaf.assignment[1]][2][tree.leaf.assignment[2]] +=3
 		if sessionType == "lab":
+			# If the current module is in the module domain then re-assign the 1st element
+			# to the eligible tutors, otherwise assign 2 empty lists and then assign the 2nd
+			# (1st element) to the eligble tutors of the module
 			if tree.leaf.assignment[0] in moduleDomain:
 				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
 			else :
 				moduleDomain[tree.leaf.assignment[0]] = [[],[]]
 				moduleDomain[tree.leaf.assignment[0]][1] = self.eligibleTutors(tree.leaf.assignment[0], False)
+			# If the current day is in the tutorDomains day domain then add 2
+			# credits back to it, otherwise assign 2 credits to it appending.
 			if tree.leaf.assignment[2] in tutorDomain[tree.leaf.assignment[1]][0]:
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] += 1
 			else :
 				tutorDomain[tree.leaf.assignment[1]][0][tree.leaf.assignment[2]] = 1
+			# If the tutors overall credits became 0 with this assignment then add it
+			# back to all the modules which can be taught (only labs because on re-adding
+			# this credit, it will only be 1 which isn't sufficent to teach a module) by this tutor
 			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
 						moduleDomain[module][1].append(tree.leaf.assignment[1])
+			# Updating the overall credits of the tutor
 			tutorDomain[tree.leaf.assignment[1]][1] +=1
+			# Updating the number of labs been taught currently by this tutor
 			tutorDomain[tree.leaf.assignment[1]][4] -=1
+			# Updating the number of credits in the other days copy to check for best days
 			tutorDomain[tree.leaf.assignment[1]][2][tree.leaf.assignment[2]] +=1
+		# If the day assigned currently is in the slotDomain
+		# then add the slot count back to it otherwise assign 1 to it.
 		if tree.leaf.assignment[2] in slotDomain:
 			slotDomain[tree.leaf.assignment[2]] +=1
 		else:
 			slotDomain[tree.leaf.assignment[2]] = 1
 		
+		# If the possible list of the node has elements, assign the first available one and update domains.
 		if (tree.leaf.possible):
 			newIndex = self.searchPossible(tree.leaf.possible, tutorDomain)
 			session = tree.leaf.possible[newIndex][1][1]
@@ -660,32 +896,60 @@ class Scheduler:
 			tree.leaf.assignment[3] = slotDomain[tree.leaf.possible[newIndex][2]]
 			tree.leaf.assignment[4] = session
 			tree.leaf.index = newIndex
+			# checking the sessiontype been assigned to update the domains accordingly
 			if session == "module":
+				# Since its a module, assigning an empty set to it (0th) indicating that the
+				# module session has been fulfilled for this module
 				moduleDomain[tree.leaf.possible[newIndex][0]][0] = []
+				# Checking if the lab session is also fulfilled (if its an empty set)
+				# if so, then deleting the module from the moduleDomain
 				if len(moduleDomain[tree.leaf.possible[newIndex][0]][1]) == 0:
 					del moduleDomain[tree.leaf.possible[newIndex][0]]
+				# Updating the day slots for the day been assigned
 				slotDomain[tree.leaf.possible[newIndex][2]] -= 1
+				# If after updating the day slots, the day's remaining slots become 0
+				# then it is deleted from the slotDomain
 				if(slotDomain[tree.leaf.possible[newIndex][2]] == 0):
 					del slotDomain[tree.leaf.possible[newIndex][2]]
+				# Updating the tutor's day credits in the tutorDomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] -=2
+				# If the day credits equal to 0 then delete the day from the tutorDays
 				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
 					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
+				# Updating the overall credits of the tutor in the tutordomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=2
+				# Updating the number of modules been taught by the tutor (adding 1)
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][3] +=1
+				# Updating the number of credits of the day been taught by the tutor (adding 3) for heuristic purposes
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][2][tree.leaf.possible[newIndex][2]] -=3
 			if session == "lab":
+				# Since its a module, assigning an empty set to it (1st) indicating that the
+				# lab session has been fulfilled for this module
 				moduleDomain[tree.leaf.possible[newIndex][0]][1] = []
+				# Checking if the module session is also fulfilled (if 1st element is an empty set)
+				# if so, then deleting the module from the moduleDomain
 				if len(moduleDomain[tree.leaf.possible[newIndex][0]][0]) == 0:
 					del moduleDomain[tree.leaf.possible[newIndex][0]]
+				# Updating the day slots for the day been assigned
 				slotDomain[tree.leaf.possible[newIndex][2]] -= 1
+				# If after updating the day slots, the day's remaining slots become 0
+				# then it is deleted from the slotDomain
 				if(slotDomain[tree.leaf.possible[newIndex][2]] == 0):
 					del slotDomain[tree.leaf.possible[newIndex][2]]
+				# Updating the tutor's day credits in the tutorDomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] -=1
+				# If the day credits equal to 0 then delete the day from the tutorDays
 				if tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]] == 0:
 					del tutorDomain[tree.leaf.possible[newIndex][1][0]][0][tree.leaf.possible[newIndex][2]]
+				# Updating the overall credits of the tutor in the tutordomain
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][1] -=1
+				# Updating the number of labs been taught by the tutor (Adding 1)
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][4] +=1
+				# Updating the number of credits been taught by the tutor on the day (for heuristic purposes)
 				tutorDomain[tree.leaf.possible[newIndex][1][0]][2][tree.leaf.possible[newIndex][2]] -=1
+			# If after updating the overall credits of the tutor, they are 0
+			# then deleting it from all the modules where it is eligible because
+			# the tutor isn't available anymore.
 			if tutorDomain[tree.leaf.possible[newIndex][1][0]][1] == 1:
 				for module in moduleDomain:
 					if tree.leaf.possible[newIndex][1][0] in moduleDomain[module][0]:
@@ -708,19 +972,27 @@ class Scheduler:
 	#A tutor can teach a lab session if their expertise includes at least one topic covered by the module.
 	#We are now concerned with 'credits'. A tutor can teach a maximum of 4 credits. Lab sessions are 1 credit, module sessiosn are 2 credits.
 	#A tutor cannot teach more than 2 credits a day.
+	'''
+		This method is used to create/return a timetable object for task 2.
+	'''
 	def createLabSchedule(self):
 		#Do not change this line
 		start = time.time()
 		#Here is where you schedule your timetable
 		timetableObj = timetable.Timetable(2)
+		# Assigning the formal domains, with the required slots, tutors and modules.
 		domain = self.domains([1,2,3,4,5,6,7,8,9,10], self.moduleList, self.tutorList)
+		# SlotDomain to store and maintain the days with available slots
 		slotDomain = {}
 		for day in domain["days"]:
 			slotDomain[day] = 10
+		# ModuleDomain to store and maintain the list of modules with the legal tutors who are available
 		moduleDomain = {}
 		for module in domain["modules"]:
 			moduleDomain[module] = [self.eligibleTutors(module, True), self.eligibleTutors(module, False)]
+		# TutorDomain to store and maintain the list of tutors with their available days and credits
 		tutorDomain = {}
+		# Sorting the tutorlist in the ascending order of their to number of topics in the expertise
 		self.mergeSortTutors(self.tutorList)
 		dayCredits = {}
 		for day in domain["days"]:
@@ -730,51 +1002,86 @@ class Scheduler:
 		tree = Tree()
 		back = 0
 		backtracking = False
+		# Iterate until there are no modules in the moduleDomain, and assign the tree after the loop comes out
 		while(moduleDomain):
+			# checking if the mode isn't set to backtracking
 			if not backtracking:
+				# using the heuristic function for Task 2 to choose the assignment
 				x = self.moduleLabChoose(moduleDomain, tutorDomain, slotDomain)
+				# checking if the heuristic returned any valid, or set to backtrack
 				if not (x == None or len(x) == 0):
-					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
 					index = 0
 					sessionType = x[index][1][1]
+					# adding this assignment along with the other possible assignments into a node and that node into a tree
 					tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, x, index))
+					# checking the sessiontype been assigned to update the domains accordingly
 					if sessionType == "module":
+						# Since its a module, assigning an empty set to it (0th) indicating that the
+						# module session has been fulfilled for this module
 						moduleDomain[x[index][0]][0] = []
+						# Checking if the lab session is also fulfilled (if its an empty set)
+						# if so, then deleting the module from the moduleDomain
 						if len(moduleDomain[x[index][0]][1]) == 0:
 							del moduleDomain[x[index][0]]
+						# Updating the day slots for the day been assigned
 						slotDomain[x[index][2]] -= 1
+						# If after updating the day slots, the day's remaining slots become 0
+						# then it is deleted from the slotDomain
 						if(slotDomain[x[index][2]] == 0):
 							del slotDomain[x[index][2]]
+						# Updating the tutor's day credits in the tutorDomain
 						tutorDomain[x[index][1][0]][0][x[index][2]] -=2
+						# If the day credits equal to 0 then delete the day from the tutorDays
 						if tutorDomain[x[index][1][0]][0][x[index][2]] == 0:
 							del tutorDomain[x[index][1][0]][0][x[index][2]]
+						# Updating the overall credits of the tutor in the tutordomain
 						tutorDomain[x[index][1][0]][1] -=2
 					if sessionType == "lab":
+						# Since its a module, assigning an empty set to it (1st) indicating that the
+						# lab session has been fulfilled for this module
 						moduleDomain[x[index][0]][1] = []
+						# Checking if the module session is also fulfilled (if 1st element is an empty set)
+						# if so, then deleting the module from the moduleDomain
 						if len(moduleDomain[x[index][0]][0]) == 0:
 							del moduleDomain[x[index][0]]
+						# Updating the day slots for the day been assigned
 						slotDomain[x[index][2]] -= 1
+						# If after updating the day slots, the day's remaining slots become 0
+						# then it is deleted from the slotDomain
 						if(slotDomain[x[index][2]] == 0):
 							del slotDomain[x[index][2]]
+						# Updating the tutor's day credits in the tutorDomain
 						tutorDomain[x[index][1][0]][0][x[index][2]] -=1
+						# If the day credits equal to 0 then delete the day from the tutorDays
 						if tutorDomain[x[index][1][0]][0][x[index][2]] == 0:
 							del tutorDomain[x[index][1][0]][0][x[index][2]]
+						# Updating the overall credits of the tutor in the tutordomain
 						tutorDomain[x[index][1][0]][1] -=1
+					# If after updating the overall credits of the tutor, they are 1
+					# then deleting it from all the modules (only modules) where it is eligible because
+					# the tutor isn't available anymore.
 					if tutorDomain[x[index][1][0]][1] == 1:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
 								moduleDomain[module][0].remove(x[index][1][0]) 
+					# If after updating the overall credits of the tutor, they are 0
+					# then deleting it from all the modules (modules and labs) where it is eligible because
+					# the tutor isn't available anymore.
 					elif tutorDomain[x[index][1][0]][1] == 0:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
 								moduleDomain[module][0].remove(x[index][1][0]) 
 							if x[index][1][0] in moduleDomain[module][1]:
 								moduleDomain[module][1].remove(x[index][1][0])
+				# if there are no valid assignments returned by the heuristics, set to backtrack
 				else:
 					backtracking = True
+			# if backtrack is set then call backtrack method for this task
 			else:
 				back+=1
 				backtracking = self.backtrackLab(moduleDomain, tutorDomain, slotDomain, tree)
+		# after coming out of the loop, i.e. assigning all the modules-tutors-day-slots, assign the tree
+		# into a TT object.
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
@@ -787,12 +1094,25 @@ class Scheduler:
 		#Do not change this line
 		return timetableObj
 
+	'''
+		This is a method to return the day after a given day
+	'''
 	def dayAfter(self, day):
 		days = {"Monday":"Tuesday", "Tuesday":"Wednesday", "Wednesday":"Thursday", "Thursday":"Friday", "Friday":"Monday"}
 		return days[day]
+
+	'''
+		This is a method to return the day before a given day
+	'''
 	def dayBefore(self, day):
 		days = {"Monday":"Friday", "Tuesday":"Monday", "Wednesday":"Tuesday", "Thursday":"Wednesday", "Friday":"Thursday"}
 		return days[day]
+
+	'''
+		This is a method to return the best of the tutor based on the module
+		flag - True if module, False if lab. If module then the days before and after
+		are considered to best and if its a lab then the same day.
+	'''
 	def nextDays(self, tutor, tutorDomain, module):
 		if module:
 			days = []
@@ -869,14 +1189,19 @@ class Scheduler:
 		start = time.time()
 		#Here is where you schedule your timetable
 		timetableObj = timetable.Timetable(2)
+		# Assigning the formal domains, with the required slots, tutors and modules.
 		domain = self.domains([1,2,3,4,5,6,7,8,9,10], self.moduleList, self.tutorList)
+		# SlotDomain to store and maintain the days with available slots
 		slotDomain = {}
 		for day in domain["days"]:
 			slotDomain[day] = 10
+		# ModuleDomain to store and maintain the list of modules with the legal tutors who are available
 		moduleDomain = {}
 		for module in domain["modules"]:
 			moduleDomain[module] = [self.eligibleTutors(module, True), self.eligibleTutors(module, False)]
+		# TutorDomain to store and maintain the list of tutors with their available days and credits
 		tutorDomain = {}
+		# Sorting the tutorlist in the ascending order of their to number of topics in the expertise
 		self.mergeSortTutors(self.tutorList)
 		dayCredits = {}
 		for day in domain["days"]:
@@ -888,60 +1213,100 @@ class Scheduler:
 		tree = Tree()
 		back = 0
 		backtracking = False
+		# Iterate until there are no modules in the moduleDomain, and assign the tree after the loop comes out
 		while(moduleDomain):
+			# checking if the mode isn't set to backtracking
 			if not backtracking:
+				# using the heuristic function for Task 2 to choose the assignment
 				result = self.moduleMinCost(moduleDomain, tutorDomain, slotDomain)
 				x = result[0]
+				# checking if the heuristic returned any valid, or set to backtrack
 				if not (x == None or len(x) == 0):
 					# need to start from here by generalising the session type and retrieving it from tutor[0][1]
 					index = self.searchPossible(x, tutorDomain)
 					sessionType = x[index][1][1]
+					# If the current assignment is based on the best days then add the possible solutions
+					# of the best days otherwise the normal possibles would be chosen.
 					if x[index][3]:
 						tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, result[1], index))
 					else:
 						tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, result[0], index))
 
 					if sessionType == "module":
+						# Since its a module, assigning an empty set to it (0th) indicating that the
+						# module session has been fulfilled for this module
 						moduleDomain[x[index][0]][0] = []
+						# Checking if the lab session is also fulfilled (if its an empty set)
+						# if so, then deleting the module from the moduleDomain
 						if len(moduleDomain[x[index][0]][1]) == 0:
 							del moduleDomain[x[index][0]]
+						# Updating the day slots for the day been assigned
 						slotDomain[x[index][2]] -= 1
+						# If after updating the day slots, the day's remaining slots become 0
+						# then it is deleted from the slotDomain
 						if(slotDomain[x[index][2]] == 0):
 							del slotDomain[x[index][2]]
+						# Updating the tutor's day credits in the tutorDomain
 						tutorDomain[x[index][1][0]][0][x[index][2]] -=2
+						# If the day credits equal to 0 then delete the day from the tutorDays
 						if tutorDomain[x[index][1][0]][0][x[index][2]] == 0:
 							del tutorDomain[x[index][1][0]][0][x[index][2]]
+						# Updating the overall credits of the tutor in the tutordomain
 						tutorDomain[x[index][1][0]][1] -=2
+						# Updating the number of modules been taught by the tutor (adding 1)
 						tutorDomain[x[index][1][0]][3] +=1
+						# Updating the number of credits of the day been taught by the tutor (adding 3) for heuristic purposes
 						tutorDomain[x[index][1][0]][2][x[index][2]] -=3
 					if sessionType == "lab":
+						# Since its a module, assigning an empty set to it (1st) indicating that the
+						# lab session has been fulfilled for this module
 						moduleDomain[x[index][0]][1] = []
+						# Checking if the module session is also fulfilled (if 1st element is an empty set)
+						# if so, then deleting the module from the moduleDomain
 						if len(moduleDomain[x[index][0]][0]) == 0:
 							del moduleDomain[x[index][0]]
+						# Updating the day slots for the day been assigned
 						slotDomain[x[index][2]] -= 1
+						# If after updating the day slots, the day's remaining slots become 0
+						# then it is deleted from the slotDomain
 						if(slotDomain[x[index][2]] == 0):
 							del slotDomain[x[index][2]]
+						# Updating the tutor's day credits in the tutorDomain
 						tutorDomain[x[index][1][0]][0][x[index][2]] -=1
+						# If the day credits equal to 0 then delete the day from the tutorDays
 						if tutorDomain[x[index][1][0]][0][x[index][2]] == 0:
 							del tutorDomain[x[index][1][0]][0][x[index][2]]
+						# Updating the overall credits of the tutor in the tutordomain
 						tutorDomain[x[index][1][0]][1] -=1
+						# Updating the number of labs been taught by the tutor (Adding 1)
 						tutorDomain[x[index][1][0]][4] +=1
+						# Updating the number of credits been taught by the tutor on the day (for heuristic purposes)
 						tutorDomain[x[index][1][0]][2][x[index][2]] -=1
+					# If after updating the overall credits of the tutor, they are 1
+					# then deleting it from all the modules (only modules) where it is eligible because
+					# the tutor isn't available anymore.
 					if tutorDomain[x[index][1][0]][1] == 1:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
 								moduleDomain[module][0].remove(x[index][1][0]) 
+					# If after updating the overall credits of the tutor, they are 0
+					# then deleting it from all the modules (modules and labs) where it is eligible because
+					# the tutor isn't available anymore.
 					elif tutorDomain[x[index][1][0]][1] == 0:
 						for module in moduleDomain:
 							if x[index][1][0] in moduleDomain[module][0]:
 								moduleDomain[module][0].remove(x[index][1][0]) 
 							if x[index][1][0] in moduleDomain[module][1]:
 								moduleDomain[module][1].remove(x[index][1][0])
+				# if there are no valid assignments returned by the heuristics, set to backtrack
 				else:
 					backtracking = True
+			# if backtrack is set then call backtrack method for this task
 			else:
 				back+=1
 				backtracking = self.backtrackMinCost(moduleDomain, tutorDomain, slotDomain, tree)
+		# after coming out of the loop, i.e. assigning all the modules-tutors-day-slots, assign the tree
+		# into a TT object.
 		self.assignTree(tree, timetableObj)
 
 		end = time.time()
@@ -999,20 +1364,22 @@ class Scheduler:
 			if sessionNumber == 11:
 				sessionNumber = 1
 				dayNumber = dayNumber + 1
-	# true for module and false for lab
+	'''
+		This method is used to return a True/False if a tutor can teach the module
+		True to check for Modules
+		False to check for Labs
+	'''
+
 	def tutorCanTeach(self, tutor, module, labOrModule):
 		if labOrModule:
 			return (all(x in tutor.expertise for x in module.topics))
 		else:
 			return (any(x in tutor.expertise for x in module.topics))
 
-	def eligibleModules(self, tutor, labOrModule):
-		modules = []
-		for x in self.moduleList:
-			if(self.tutorCanTeach(tutor, x, labOrModule)):
-				modules.append(x)
-		return modules
-	
+	'''
+		This method is used to return a list of tutors (True for modules 
+		False for Labs) who are eligible to teach the passed modules
+	'''	
 	def eligibleTutors(self, module, labOrModule):
 		tutors = []
 		for x in self.tutorList:
