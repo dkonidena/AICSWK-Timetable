@@ -59,7 +59,7 @@ class Tree:
 		Else, the leaf's prev and next are updating accordingly. 
 	'''
 	def remove(self):
-		if self.leaf == None:
+		if self.leaf.prev == None:
 			return None
 		else:
 			old = self.leaf
@@ -135,10 +135,10 @@ class Scheduler:
 		minModule = {}
 		# Choosing the modules with the least tutors available
 		for module in moduleDomain:
-			if self.tutorListLength(tutorDomain, moduleDomain[module]) < minTutors:
+			if self.tutorListLength(tutorDomain, moduleDomain[module], 1) < minTutors:
 				minModule.clear()
 				minModule[module] = moduleDomain[module]
-				minTutors = self.tutorListLength(tutorDomain, moduleDomain[module]) 
+				minTutors = self.tutorListLength(tutorDomain, moduleDomain[module], 1) 
 			elif len(moduleDomain[module]) == minTutors:
 				minModule[module] = moduleDomain[module]
 		# From the modules chosen along with the tutors, choosing the tutor with the max available days
@@ -503,11 +503,15 @@ class Scheduler:
 		This method returns the count of the tutors in the tutorList passed as the parameter
 		whose available credits are not 0.
 	'''
-	def tutorListLength(self, tutorDomain, tutorList):
+	def tutorListLength(self, tutorDomain, tutorList, sessionType):
 		c = 0
 		for tutor in tutorList:
-			if tutorDomain[tutor][1] > 0:
-				c+=1
+			if sessionType == 0:
+				if tutorDomain[tutor][1] - 2 >= 0:
+					c+=1
+			elif sessionType == 1:
+				if tutorDomain[tutor][1] - 1 >= 0:
+					c+=1
 		return c
 
 	'''
@@ -533,15 +537,15 @@ class Scheduler:
 			i = 0
 			while(i<len(moduleDomain[module])):
 				if moduleDomain[module][i] != [None]:
-					if self.tutorListLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+					if self.tutorListLength(tutorDomain, moduleDomain[module][i], i) < minTutors and len(moduleDomain[module][i]) != 0:
 						minModule.clear()
 						if i == 0:
 							minModule[module] = (moduleDomain[module][i], "module")
-							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
+							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i], i)
 						elif i == 1:
 							minModule[module] = (moduleDomain[module][i], "lab")
-							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
-					elif self.tutorListLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i], i)
+					elif self.tutorListLength(tutorDomain, moduleDomain[module][i], i) == minTutors and len(moduleDomain[module][i]) != 0:
 						if i == 0:
 							minModule[module] = (moduleDomain[module][i], "module")
 						elif i == 1:
@@ -610,15 +614,15 @@ class Scheduler:
 			i = 0
 			while(i<len(moduleDomain[module])):
 				if moduleDomain[module][i] != [None]:
-					if self.tutorListLength(tutorDomain, moduleDomain[module][i]) < minTutors and len(moduleDomain[module][i]) != 0:
+					if self.tutorListLength(tutorDomain, moduleDomain[module][i], i) < minTutors and len(moduleDomain[module][i]) != 0:
 						minModule.clear()
 						if i == 0:
 							minModule[module] = (moduleDomain[module][i], "module")
-							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
+							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i], i)
 						elif i == 1:
 							minModule[module] = (moduleDomain[module][i], "lab")
-							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i])
-					elif self.tutorListLength(tutorDomain, moduleDomain[module][i]) == minTutors and len(moduleDomain[module][i]) != 0:
+							minTutors = self.tutorListLength(tutorDomain, moduleDomain[module][i], i)
+					elif self.tutorListLength(tutorDomain, moduleDomain[module][i], i) == minTutors and len(moduleDomain[module][i]) != 0:
 						if i == 0:
 							minModule[module] = (moduleDomain[module][i], "module")
 						elif i == 1:
@@ -666,7 +670,7 @@ class Scheduler:
 		try:
 			for slots in slotsAssigned:
 				for days in slotsAssigned[slots][1]:
-					assignment = [slots, slotsAssigned[slots][0], days]
+					assignment = [slots, slotsAssigned[slots][0], days, True]
 					possible.append(assignment)
 		except:
 			return None
@@ -775,6 +779,13 @@ class Scheduler:
 			# If the tutors overall credits became 0 with this assignment then add it
 			# back to all the modules which can be taught (only labs because on re-adding
 			# this credit, it will only be 1 which isn't sufficent to teach a module) by this tutor
+			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
+				for module in moduleDomain:
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+						if moduleDomain[module][0] == [None]:
+							moduleDomain[module][0] = [tree.leaf.assignment[1]]
+						else:
+							moduleDomain[module][0].append(tree.leaf.assignment[1])
 			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
@@ -865,7 +876,11 @@ class Scheduler:
 							moduleDomain[module][1] = [None] 
 			return False
 		else:
-			tree.remove()
+			if tree.remove() == None:
+				random.shuffle(self.moduleList)
+				random.shuffle(self.tutorList)
+				self.mergeSortModules(self.moduleList)
+				return self.createLabSchedule()
 			return True
 	'''
 		This backtrack method is for Task 3 - createMinCostSchedule(). When this is called, it indicates
@@ -946,6 +961,13 @@ class Scheduler:
 			# If the tutors overall credits became 0 with this assignment then add it
 			# back to all the modules which can be taught (only labs because on re-adding
 			# this credit, it will only be 1 which isn't sufficent to teach a module) by this tutor
+			if tutorDomain[tree.leaf.assignment[1]][1] == 1:
+				for module in moduleDomain:
+					if self.tutorCanTeach(tree.leaf.assignment[1], module, True):
+						if moduleDomain[module][0] == [None]:
+							moduleDomain[module][0] = [tree.leaf.assignment[1]]
+						else:
+							moduleDomain[module][0].append(tree.leaf.assignment[1])
 			if tutorDomain[tree.leaf.assignment[1]][1] == 0:
 				for module in moduleDomain:
 					if self.tutorCanTeach(tree.leaf.assignment[1], module, False):
@@ -1043,7 +1065,11 @@ class Scheduler:
 				
 			return False
 		else:
-			tree.remove()
+			if tree.remove() == None:
+				random.shuffle(self.moduleList)
+				random.shuffle(self.tutorList)
+				self.mergeSortModules(self.moduleList)
+				return self.createMinCostSchedule()
 			return True
 
 	#Now, we have introduced lab sessions. Each day now has ten sessions, and there is a lab session as well as a module session.
@@ -1228,10 +1254,17 @@ class Scheduler:
 		of backtrack
 	'''
 	def searchPossible(self, possible):
-		if len(possible) < 5:
-			return 0
+		indices = []
+		i=0
+		for i in range(len(possible)):
+			if possible[i][3]:
+				indices.append(i)
+		if indices:
+			return indices[0]
+		# elif len(possible) < 5:
+		# 	return 0
 		else:
-			return math.ceil(len(possible)/2)
+			return math.floor(len(possible)/2)
 	#It costs £500 to hire a tutor for a single module.
 	#If we hire a tutor to teach a 2nd module, it only costs £300. (meaning 2 modules cost £800 compared to £1000)
 	#If those two modules are taught on consecutive days, the second module only costs £100. (meaning 2 modules cost £600 compared to £1000)
@@ -1286,7 +1319,7 @@ class Scheduler:
 					# If the current assignment is based on the best days then add the possible solutions
 					# of the best days otherwise the normal possibles would be chosen.
 					if x[index][3]:
-						tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, result[1], index))
+						tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, result[1], result[1].index(x[index])))
 					else:
 						tree.add(Node(x[index][0],x[index][1][0],x[index][2], slotDomain[x[index][2]],sessionType, result[0], index))
 
