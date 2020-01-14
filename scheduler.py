@@ -4,7 +4,6 @@ import ReaderWriter
 import timetable
 import random
 import math
-import time
 '''
 	This is the class which depicts the node in the search tree.
 	It stores the assignment of a given slot i.e. - 
@@ -434,7 +433,6 @@ class Scheduler:
 	'''
 	def createSchedule(self):
 		#Do not change this line
-		start = time.time()
 		timetableObj = timetable.Timetable(1)
 		# Assigning the formal domains, with the required slots, tutors and modules.
 		domain = self.domains([1,2,3,4,5], self.moduleList, self.tutorList)
@@ -494,9 +492,6 @@ class Scheduler:
 		# into a TT object.
 		self.assignTree(tree, timetableObj)
 
-		end = time.time()
-		print("BACKTRACK ", back)
-		print("TIME ELAPSED ", end-start)
 		#Do not change this line
 		return timetableObj
 	'''
@@ -1083,7 +1078,6 @@ class Scheduler:
 	'''
 	def createLabSchedule(self):
 		#Do not change this line
-		start = time.time()
 		#Here is where you schedule your timetable
 		timetableObj = timetable.Timetable(2)
 		# Assigning the formal domains, with the required slots, tutors and modules.
@@ -1200,11 +1194,6 @@ class Scheduler:
 		# after coming out of the loop, i.e. assigning all the modules-tutors-day-slots, assign the tree
 		# into a TT object.
 		self.assignTree(tree, timetableObj)
-
-		end = time.time()
-		print("BACKTRACK ", back)
-		print("TIME ELAPSED ", end-start)
-
 		#This line generates a random timetable, that may not be valid. You can use this or delete it.		
 		# self.randomModAndLabSchedule(timetableObj)
 
@@ -1277,7 +1266,6 @@ class Scheduler:
 	#You should consider the lecture material, particular the discussions on heuristics, and how you might develop a heuristic to help you here. 
 	def createMinCostSchedule(self):
 		#Do not change this line
-		start = time.time()
 		#Here is where you schedule your timetable
 		timetableObj = timetable.Timetable(2)
 		# Assigning the formal domains, with the required slots, tutors and modules.
@@ -1410,10 +1398,6 @@ class Scheduler:
 		# after coming out of the loop, i.e. assigning all the modules-tutors-day-slots, assign the tree
 		# into a TT object.
 		self.assignTree(tree, timetableObj)
-
-		end = time.time()
-		print("BACKTRACK ", back)
-		print("TIME ELAPSED ", end-start)
 
 		#This line generates a random timetable, that may not be valid. You can use this or delete it.		
 		# self.randomModAndLabSchedule(timetableObj)
