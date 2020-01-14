@@ -425,7 +425,10 @@ class Scheduler:
 						moduleDomain[module].remove(tree.leaf.possible[0][1])
 			return False
 		else:
-			tree.remove()
+			if tree.remove() == None:
+				random.shuffle(self.tutorList)
+				random.shuffle(self.moduleList)
+				return self.createSchedule()
 			return True
 
 	'''
@@ -483,7 +486,6 @@ class Scheduler:
 								moduleDomain[module].remove(x[0][1])
 				# if there are no valid assignments returned by the heuristics, set to backtrack
 				else:
-					back+=1
 					backtracking = True
 			# if backtrack is set then call backtrack method for this task
 			else:
@@ -1250,8 +1252,6 @@ class Scheduler:
 				indices.append(i)
 		if indices:
 			return indices[0]
-		# elif len(possible) < 5:
-		# 	return 0
 		else:
 			return math.floor(len(possible)/2)
 	#It costs £500 to hire a tutor for a single module.
